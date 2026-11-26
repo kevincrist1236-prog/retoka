@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#121114">
 <title>Retoka · Editor de fotos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Anton&family=Bebas+Neue&family=Montserrat:ital,wght@0,400;0,700;0,800;1,400;1,700&family=Poppins:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Serif+Display:ital@0;1&family=Great+Vibes&family=Dancing+Script:wght@400;700&family=Pacifico&family=Lobster&family=Oswald:wght@400;700&family=Raleway:ital,wght@0,400;0,800;1,400&family=Abril+Fatface&family=Caveat:wght@400;700&family=Archivo+Black&family=Cinzel:wght@400;700&family=Righteous&family=Permanent+Marker&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
@@ -31,6 +32,10 @@ button{cursor:pointer;border:0;background:none}
 svg.i{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .btn{background:var(--acc);color:#fff;font-weight:700;padding:10px 18px;border-radius:999px;min-height:42px}
 .btn:hover{filter:brightness(1.08)}
+#exp{display:flex;align-items:center;gap:6px}#exp svg{stroke:#fff}
+button,label,input{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.cmp .short{display:none}.add b{font-size:20px;font-weight:600;display:block;line-height:1}.add span{display:block}
+.grab{display:none}
 .stage{position:relative;overflow:auto;display:flex;padding:58px 28px 24px;background:radial-gradient(circle at 50% 40%,#1d1b21,#121114 70%)}
 #cv{margin:auto;flex:none;box-shadow:0 30px 70px -20px #000;touch-action:none}
 .bar{position:absolute;left:16px;right:16px;top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
@@ -121,16 +126,30 @@ textarea{width:100%;min-height:76px;border-radius:12px;border:1px solid var(--li
 .outs figure{margin:0;display:grid;gap:8px}
 .outs img{width:100%;border-radius:10px;display:block;background:repeating-conic-gradient(#333 0 25%,#444 0 50%) 0 0/20px 20px}
 @media (max-width:820px){
- .app{grid-template-columns:minmax(0,1fr);grid-template-rows:52px minmax(0,1fr) 84px auto}
- .top{padding:0 10px;gap:8px}.top .logo{height:19px}.modes{margin-left:0;gap:0}.modes button{padding:8px 7px;font-size:14px}
- .ib{width:34px;height:34px}.btn{padding:9px 12px}
- .stage{padding:52px 12px 12px}
- .film{grid-row:3;padding:8px 10px}.film .th,.add{width:62px;height:62px}
- .insp{grid-column:1;grid-row:4;border:0;border-top:1px solid var(--line);max-height:44dvh}
- .tabs{display:flex;overflow-x:auto;padding:8px}.tabs button{flex:none;min-width:66px}
- .panel{padding:14px}
- .cmp{right:8px;bottom:8px;padding:7px 11px;font-size:13px}
- .pill:not(.hot){display:none}
+ .app{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto auto;height:100dvh}
+ .top{min-height:50px;padding:env(safe-area-inset-top) 10px 0;gap:4px}.top .logo{height:19px}
+ .tb{gap:2px}.ib{width:38px;height:38px}
+ #exp{width:42px;height:38px;min-height:38px;padding:0;justify-content:center;border-radius:12px}#exp span{display:none}
+ .stage{grid-row:2;padding:54px 10px 10px}
+ .bar{top:8px;left:10px;right:10px;gap:8px;flex-wrap:nowrap}
+ .bar .modes{margin:0;gap:2px;background:var(--s2);border-radius:999px;padding:3px;flex:none}
+ .bar .modes button{padding:7px 12px;border:0;border-radius:999px;font-size:14px}
+ .bar .modes button.on{background:var(--cream);color:#16141a}
+ .bar select{padding:7px 8px;font-size:13px;min-width:0;flex:1 1 auto;max-width:150px}
+ .pill:not(.hot){display:none}.pill.hot{position:absolute;top:44px;left:0;font-size:13px}
+ .cmp{right:10px;bottom:10px;padding:7px 12px;font-size:13px}.cmp .long{display:none}.cmp .short{display:inline}
+ .film{grid-row:3;padding:8px 10px;gap:8px}.film .th,.add{width:56px;height:56px}.add span{display:none}.film .x{width:22px;height:22px;line-height:22px}
+ .insp{grid-column:1;grid-row:4;border:0;border-top:1px solid var(--line);flex-direction:column-reverse;max-height:none}
+ .grab{display:flex;justify-content:center;align-items:center;width:100%;height:22px;background:var(--s1);flex:none}
+ .grab i{width:44px;height:5px;border-radius:9px;background:#4a4650}
+ .panel{flex:none;max-height:34dvh;padding:4px 14px 18px;transition:max-height .2s}.insp.big .panel{max-height:54dvh}
+ .tabs{display:flex;overflow-x:auto;gap:2px;padding:6px 6px calc(6px + env(safe-area-inset-bottom));border-bottom:0;border-top:1px solid var(--line);scrollbar-width:none}
+ .tabs::-webkit-scrollbar{display:none}
+ .tabs button{flex:none;min-width:66px;min-height:52px;font-size:13px}
+ .panel h2{font-size:18px}.sub{font-size:13px;margin-bottom:10px}.card{padding:14px;border-radius:14px}.card p{font-size:13px}
+ input[type=range]{height:34px}
+ .tpls{gap:6px}.fgrid{gap:8px}
+ .sheet{padding:16px}
 }
 </style>
 </head>
@@ -142,17 +161,17 @@ textarea{width:100%;min-height:76px;border-radius:12px;border:1px solid var(--li
   <div class="tb">
    <button class="ib" id="undo" title="Deshacer (Ctrl+Z)" aria-label="Deshacer"><svg class="i" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg></button>
    <button class="ib" id="redo" title="Rehacer (Ctrl+Shift+Z)" aria-label="Rehacer"><svg class="i" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h3"/></svg></button>
-   <button class="btn" id="exp">Exportar</button>
+   <button class="btn" id="exp" aria-label="Exportar"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg><span>Exportar</span></button>
   </div>
  </header>
  <main class="stage" id="stage">
   <div class="bar"><select id="fmt" aria-label="Tamaño del lienzo"></select><span class="pill" id="chip">Fotos de muestra generadas · añade las tuyas abajo</span></div>
   <canvas id="cv" aria-label="Lienzo de edición"></canvas>
   <div class="scan" id="scan"></div>
-  <button class="cmp" id="cmp">Mantén: ver original</button>
+  <button class="cmp" id="cmp"><span class="long">Mantén: ver original</span><span class="short">Original</span></button>
  </main>
  <div class="film" id="film"></div>
- <aside class="insp"><nav class="tabs" id="tabs"></nav><div class="panel" id="panel"></div></aside>
+ <aside class="insp" id="insp"><nav class="tabs" id="tabs"></nav><div class="panel" id="panel"></div><button class="grab" id="grab" aria-label="Agrandar o achicar el panel"><i></i></button></aside>
 </div>
 <div class="modal" id="mod" hidden><div class="sheet">
  <header><h2>Tu diseño está listo</h2><button class="gb" id="close">Cerrar</button></header>
@@ -610,7 +629,7 @@ function drawItems(x,items,max,exp){for(const it of items){if(it.draw){x.save();
  else if(it.poly){x.beginPath();it.poly.forEach(([a,b],i)=>i?x.lineTo(a,b):x.moveTo(a,b));x.closePath();x.clip()}
  cover(x,p,it.big?(exp?3200:1600):max,it.x,it.y,it.w,it.h,it.r||0,exp);x.restore();if(it.slot>=0)cells.push([it.x,it.y,it.w,it.h,it.k,it.slot,pi])}}
 let raf=0;
-function draw(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;const[W,H]=docSize(),sw=stage.clientWidth-56,sh=stage.clientHeight-82;
+function draw(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;const[W,H]=docSize(),cs=getComputedStyle(stage),sw=stage.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight)-6,sh=stage.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom)-6;
  let s=Math.min(sw/W,sh/H);if(S.mode==='carrusel')s=Math.min(sh/H,Math.max(sw/W,Math.min(sh/H,240/FMT[S.car.fmt][0])));s=Math.max(s,.05);V=s;
  const dpr=Math.min(2,devicePixelRatio||1);cv.style.width=W*s+'px';cv.style.height=H*s+'px';cv.width=Math.round(W*s*dpr);cv.height=Math.round(H*s*dpr);
  cv.style.cursor=(brush.on||mnew)&&S.mode==='foto'?'crosshair':'default';render(ctx,s*dpr,false);if(cur==='ajustes')drawHist()})}
@@ -740,7 +759,7 @@ let histT=0;function drawHist(){clearTimeout(histT);histT=setTimeout(()=>{const 
 function imgPt(X,Y){const p=photos[act],[W,H]=docSize(),T=coverT(p.src,W,H);return[(X-T.ox)/T.s/p.src.width,(Y-T.oy)/T.s/p.src.height]}
 function docPt(ix,iy){const p=photos[act],[W,H]=docSize(),T=coverT(p.src,W,H);return[T.ox+ix*p.src.width*T.s,T.oy+iy*p.src.height*T.s]}
 function openPanel(n){if(n!=='recortar')crop=null;if(n!=='zonas')mnew=null;cur=n;$('#tabs').innerHTML=TABS.map(([k,l])=>`<button class="${k===n?'on':''}" data-p="${k}">${icon(k)}${l}</button>`).join('');panel.innerHTML=P[n]();if(n==='filtros')previews();if(n==='ajustes'){initCurve();drawHist();panel.querySelectorAll('details.sec').forEach(d=>d.addEventListener('toggle',()=>{d.open?openSecs.add(d.dataset.sec):openSecs.delete(d.dataset.sec);if(d.open&&d.dataset.sec==='Curvas')initCurve()}))}}
-function film(){$('#film').innerHTML=`<label class="add"><input type="file" id="file" accept="image/*" multiple>+ Añadir<br>fotos</label>`+photos.map((p,i)=>`<button class="th ${i===act?'on':''}" data-i="${i}" aria-label="${esc(p.name)}"><img src="${p.url}" alt=""><span class="x" data-rm="${i}" role="button" aria-label="Quitar foto">×</span></button>`).join('');
+function film(){$('#film').innerHTML=`<label class="add"><input type="file" id="file" accept="image/*" multiple><b>+</b><span>Añadir fotos</span></label>`+photos.map((p,i)=>`<button class="th ${i===act?'on':''}" data-i="${i}" aria-label="${esc(p.name)}"><img src="${p.url}" alt=""><span class="x" data-rm="${i}" role="button" aria-label="Quitar foto">×</span></button>`).join('');
  $('#file').onchange=e=>loadFiles(e.target.files)}
 function bar(){const f=$('#fmt');f.hidden=S.mode==='carrusel';f.innerHTML=FMTL.map(([k,l])=>`<option value="${k}" ${S.fmt===k?'selected':''}>${l}</option>`).join('');
  const c=$('#chip');if(selCell){c.hidden=false;c.className='pill hot';c.textContent=`Elige abajo la foto para ${selCell.k==='col'?'la celda':'el slide'} ${selCell.i+1}`}
@@ -809,6 +828,9 @@ const end=()=>{if(cdrag){cdrag=null}if(mdrag){mdrag=null;commit();openPanel(cur)
 const cmp=$('#cmp');cmp.addEventListener('pointerdown',e=>{showOrig=true;cmp.setPointerCapture(e.pointerId);draw()});
 ['pointerup','pointercancel','pointerleave'].forEach(ev=>cmp.addEventListener(ev,()=>{if(showOrig){showOrig=false;draw()}}));
 document.addEventListener('dragover',e=>e.preventDefault());document.addEventListener('drop',e=>{e.preventDefault();loadFiles(e.dataTransfer.files)});
+const mq=matchMedia('(max-width:820px)'),placeModes=()=>{const m=$('#modes');if(mq.matches){if(m.parentElement!==$('.bar'))$('.bar').prepend(m)}else if(m.parentElement!==$('.top'))$('.top .logo').after(m)};
+(mq.addEventListener?mq.addEventListener('change',()=>{placeModes();draw()}):mq.addListener(()=>{placeModes();draw()}));placeModes();
+$('#grab').onclick=()=>{$('#insp').classList.toggle('big')};
 $('#undo').onclick=undo;$('#redo').onclick=redo;
 addEventListener('keydown',e=>{const typing=/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!typing){e.preventDefault();e.shiftKey?redo():undo()}
