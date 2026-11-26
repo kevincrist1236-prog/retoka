@@ -1,0 +1,11 @@
+{
+  "name": "retoka-bg-bundle",
+  "private": true,
+  "scripts": {
+    "build:bg": "esbuild bg-entry.js --bundle --format=iife --minify --target=es2020 --outfile=../app/bg.js"
+  },
+  "devDependencies": {
+    "@imgly/background-removal": "1.4.5",
+    "esbuild": "^0.24.0"
+  }
+}
