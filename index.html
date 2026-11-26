@@ -61,6 +61,7 @@ svg.i{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stro
 .card.hero p{color:#ffe3e7}
 .diag{margin-top:14px;background:rgba(0,0,0,.28);border-radius:12px;padding:12px 14px;font-size:14px}.diag ul{margin:8px 0;padding-left:18px}.diag p{margin:0;color:#ffe3e7}.diag .pill{background:var(--cream);color:#16141a;text-transform:capitalize}
 .wb{width:100%;padding:11px;border-radius:12px;background:var(--cream);color:#16141a;font-weight:700;min-height:46px;display:flex;align-items:center;justify-content:center;gap:8px}
+.wb[href]{text-decoration:none}
 .wb:disabled{opacity:.5;cursor:wait}
 .gb{padding:10px 14px;border-radius:12px;background:var(--s3);font-weight:600;min-height:44px}
 .gb.full{width:100%;margin-top:8px}
@@ -820,7 +821,7 @@ $('#exp').onclick=()=>{if(!photos.length)return toast('Añade una foto primero')
  const png=S.mode==='foto'&&photos[act].under&&photos[act].bg.m==='none',ty=png?'image/png':'image/jpeg',ext=png?'png':'jpg';
  let outs=[];if(S.mode==='carrusel'){const[sw,sh]=FMT[S.car.fmt];for(let i=0;i<S.car.n;i++){const s=mk(sw,sh);s.getContext('2d').drawImage(c,i*sw,0,sw,sh,0,0,sw,sh);outs.push(s.toDataURL(ty,.93))}}else outs=[c.toDataURL(ty,.93)];
  LAST=outs.map((u,i)=>({u,name:`retoka-${S.mode}-${i+1}.${ext}`}));
- $('#outs').innerHTML=LAST.map((o,i)=>`<figure><img src="${o.u}" alt="Imagen ${i+1}"><button class="wb dl" data-i="${i}" ${dl?'':'hidden'}>Descargar ${outs.length>1?'slide '+(i+1):'imagen'}</button></figure>`).join('');
+ $('#outs').innerHTML=LAST.map((o,i)=>`<figure><img src="${o.u}" alt="Imagen ${i+1}">${dl||window.claude?`<button class="wb dl" data-i="${i}" ${dl?'':'hidden'}>Descargar ${outs.length>1?'slide '+(i+1):'imagen'}</button>`:`<a class="wb" href="${o.u}" download="${o.name}">Descargar ${outs.length>1?'slide '+(i+1):'imagen'}</a>`}</figure>`).join('');
  $('#mod').hidden=false;draw()};
 const toBytes=u=>{const b=atob(u.split(',')[1]),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a};
 $('#outs').addEventListener('click',async e=>{const b=e.target.closest('.dl');if(!b||!dl)return;const o=LAST[+b.dataset.i];
