@@ -14,12 +14,21 @@ Editor de fotos con IA, fácil para principiantes y más asequible que las herra
 - **Carrusel** para Instagram (una por slide, panorámico, puzzle continuo, portada + historia, editorial).
 - Deshacer y rehacer de todo, y "Volver a la foto original".
 
+## Video (nuevo)
+
+- **Edición en 1 toque:** Reel dinámico, Vlog cálido, Cine, Retro VHS y Limpio profesional (quita silencios, zooms, transiciones, sonidos y color automáticos).
+- **Línea de tiempo:** videos y fotos, dividir, recortar, velocidad, volumen, mover, duplicar, transiciones (fundido, a negro, deslizar, zoom).
+- **Color** (10 looks + ajustes), **efectos** (acercar/alejar lento, zoom fijo, sacudida, destello, Retro VHS, B&N, franjas de cine), **texto animado**.
+- **Audio:** música propia con entrada y salida suave, 12 efectos de sonido propios (sintetizados en la app, sin licencias de terceros).
+- **Exportar MP4** 1080p (H.264) con audio, directamente en el navegador.
+
 ## Estructura
 
 ```
 app/            La aplicación lista para servir (abrir app/index.html desde un servidor web)
   index.html    Editor completo (HTML + CSS + JS en un solo archivo)
   bg.js         Librería de quitar fondo empaquetada (@imgly/background-removal)
+  mux.js        Empaquetador MP4 (mp4-muxer) para exportar video
   imgly/        Modelos de IA y runtime (ONNX/WASM) en partes de 4 MB
 assets/         Logo de Retoka
 tools/          Código fuente editable y scripts de compilación
@@ -38,7 +47,8 @@ Debe servirse desde un servidor web (no abriendo el archivo directamente), porqu
 ## Editar
 
 1. Edita `tools/index.src.html`.
-2. Ejecuta `python3 tools/build.py` para generar `app/index.html` con el logo incluido.
+2. El módulo de video está en `tools/video.src.js`.
+3. Ejecuta `python3 tools/build.py` para generar `app/index.html` con el logo incluido.
 
 Para recompilar `bg.js`: `cd tools && npm install && npm run build:bg`.
 

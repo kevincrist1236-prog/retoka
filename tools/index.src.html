@@ -44,6 +44,23 @@ svg.i{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stro
 button,label,input{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .cmp .short{display:none}.add b{font-size:20px;font-weight:600;display:block;line-height:1}.add span{display:block}
 .grab{display:none}
+.app.vid{grid-template-rows:58px minmax(0,1fr) 196px}.app.vid .film{display:block;padding:0;overflow:hidden}.app.vid .cmp{display:none}
+.tl{display:flex;flex-direction:column;height:100%}
+.tlbar{display:flex;align-items:center;gap:6px;padding:5px 10px;border-bottom:1px solid var(--line)}
+#vplay{background:var(--cream);color:#16141a;border-radius:999px}#vplay svg{fill:#16141a;stroke:none}
+.tls{flex:1;overflow-x:auto;overflow-y:hidden;position:relative}
+.tlt{position:relative;height:100%;touch-action:none;cursor:pointer;user-select:none;-webkit-user-select:none}
+.ruler{height:20px;position:relative;color:var(--mute);font-size:13px}.ruler span{position:absolute;top:1px}
+.trow{position:relative;height:58px;margin-top:2px}.trow.aux{height:54px}
+.clip{position:absolute;top:0;height:100%;border-radius:8px;background-size:auto 100%;background-repeat:repeat-x;background-color:#2a2830;border:2px solid transparent;overflow:hidden;box-sizing:border-box}
+.clip.on{border-color:var(--cream)}.clip b{position:absolute;left:4px;bottom:3px;font-size:13px;font-weight:600;background:rgba(0,0,0,.6);padding:0 5px;border-radius:5px}
+.trm{position:absolute;left:-3px;top:50%;width:12px;height:12px;background:var(--acc);transform:translateY(-50%) rotate(45deg);border-radius:2px}
+.tchip{position:absolute;top:2px;height:24px;border-radius:6px;background:#7b5cff;color:#fff;font-size:13px;padding:2px 6px;white-space:nowrap;overflow:hidden;box-sizing:border-box}.tchip.on{outline:2px solid var(--cream)}
+.sdot{position:absolute;top:34px;width:12px;height:12px;border-radius:99px;background:#ffb020;transform:translateX(-50%);border:2px solid #121114}
+.mbar{position:absolute;top:30px;height:20px;border-radius:6px;background:rgba(63,208,164,.3);color:#bff3e1;font-size:13px;padding:0 8px;white-space:nowrap;overflow:hidden;pointer-events:none;line-height:20px}
+.ph{position:absolute;top:0;bottom:0;width:2px;background:var(--acc);pointer-events:none;margin-left:-1px}.ph::before{content:'';position:absolute;top:0;left:-5px;border:6px solid transparent;border-top-color:var(--acc)}
+.sfx{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.sfx div{display:flex;align-items:center;gap:4px;background:var(--s2);border-radius:10px;padding:4px 4px 4px 10px;font-size:14px}.sfx span{flex:1}
+.ib2{width:36px;height:36px;border-radius:8px;background:var(--s3);font-size:15px}
 .stage{position:relative;overflow:auto;display:flex;padding:58px 28px 24px;background:radial-gradient(circle at 50% 40%,#1d1b21,#121114 70%)}
 #cv{margin:auto;flex:none;box-shadow:0 30px 70px -20px #000;touch-action:none}
 .bar{position:absolute;left:16px;right:16px;top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
@@ -141,11 +158,12 @@ textarea{width:100%;min-height:76px;border-radius:12px;border:1px solid var(--li
  .stage{grid-row:2;padding:54px 10px 10px}
  .bar{top:8px;left:10px;right:10px;gap:8px;flex-wrap:nowrap}
  .bar .modes{margin:0;gap:2px;background:var(--s2);border-radius:999px;padding:3px;flex:none}
- .bar .modes button{padding:7px 12px;border:0;border-radius:999px;font-size:14px}
+ .bar .modes button{padding:7px 10px;border:0;border-radius:999px;font-size:14px}
  .bar .modes button.on{background:var(--cream);color:#16141a}
  .bar select{padding:7px 8px;font-size:13px;min-width:0;flex:1 1 auto;max-width:150px}
  .pill:not(.hot){display:none}.pill.hot{position:absolute;top:44px;left:0;font-size:13px}
  .cmp{right:10px;bottom:10px;padding:7px 12px;font-size:13px}.cmp .long{display:none}.cmp .short{display:inline}
+ .app.vid{grid-template-rows:auto minmax(0,1fr) 184px auto}
  .film{grid-row:3;padding:8px 10px;gap:8px}.film .th,.add{width:56px;height:56px}.add span{display:none}.film .x{width:22px;height:22px;line-height:22px}
  .insp{grid-column:1;grid-row:4;border:0;border-top:1px solid var(--line);flex-direction:column-reverse;max-height:none}
  .grab{display:flex;justify-content:center;align-items:center;width:100%;height:22px;background:var(--s1);flex:none}
@@ -165,7 +183,7 @@ textarea{width:100%;min-height:76px;border-radius:12px;border:1px solid var(--li
 <div class="app">
  <header class="top">
   <img class="logo" src="data:image/png;base64,LOGO_B64" alt="Retoka">
-  <nav class="modes" id="modes"><button data-m="foto" class="on">Foto</button><button data-m="collage">Collage</button><button data-m="carrusel">Carrusel</button></nav>
+  <nav class="modes" id="modes"><button data-m="foto" class="on">Foto</button><button data-m="collage">Collage</button><button data-m="carrusel">Carrusel</button><button data-m="video">Video</button></nav>
   <div class="tb">
    <button class="ib" id="undo" title="Deshacer (Ctrl+Z)" aria-label="Deshacer"><svg class="i" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg></button>
    <button class="ib" id="redo" title="Rehacer (Ctrl+Shift+Z)" aria-label="Rehacer"><svg class="i" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h3"/></svg></button>
@@ -562,6 +580,7 @@ function applyCutBrush(st){const p=photos[act];if(!p||!p.under)return;const[W,H]
 /* ---------- render ---------- */
 function photoFor(kind,i){const n=photos.length,m=S[kind].map[i];return m!=null&&m<n?m:i%n}
 function docSize(){
+ if(S.mode==='video')return VFMT[VD.fmt];
  if(S.mode==='carrusel'){const[w,h]=FMT[S.car.fmt];return[w*S.car.n,h]}
  if(crop&&S.mode==='foto'&&photos[act]){const p=photos[act],odd=crop.rot%2,iw=odd?p.src.height:p.src.width,ih=odd?p.src.width:p.src.height;return[1080,Math.round(clamp(1080*ih/iw,400,2700))]}
  if(S.fmt==='orig'){const p=photos[act];if(S.mode==='foto'&&p)return[1080,Math.round(clamp(1080*p.src.height/p.src.width,540,2160))];return FMT['4:5']}
@@ -581,7 +600,7 @@ function drawText(x,t){
  x.fillStyle=t.color;x.textBaseline='middle';x.textAlign=t.al||'center';const ax=t.al==='left'?left:t.al==='right'?left+bw:t.x;
  lines.forEach((l,i)=>x.fillText(l,ax,t.y-bh/2+lh*(i+.5)));x.shadowColor='transparent';x.shadowBlur=0;x.shadowOffsetY=0;if('letterSpacing' in x)x.letterSpacing='0px';
  t._bb=[left-pad-6,t.y-bh/2-pad*.55-6,bw+pad*2+12,bh+pad*1.1+12]}
-function render(x,sc,exp){
+function render(x,sc,exp){if(S.mode==='video')return vrender(x,sc,exp);
  const[W,H]=docSize(),max=exp?2400:clamp(Math.ceil(Math.max(W,H)*sc*1.05),800,2400);x.setTransform(sc,0,0,sc,0,0);cells=[];x.clearRect(0,0,W,H);
  const transparent=exp&&S.mode==='foto'&&photos[act]&&photos[act].under&&photos[act].bg.m==='none';
  if(!transparent){x.fillStyle=S.mode==='collage'?(S.col.style==='pelicula'?'#111':S.col.bg):S.mode==='carrusel'&&!['pano','cada'].includes(S.car.tpl)?S.car.bg:'#16141a';x.fillRect(0,0,W,H)}
@@ -639,7 +658,7 @@ function drawItems(x,items,max,exp){for(const it of items){if(it.draw){x.save();
 let raf=0;
 function draw(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;const[W,H]=docSize(),cs=getComputedStyle(stage),sw=stage.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight)-6,sh=stage.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom)-6;
  let s=Math.min(sw/W,sh/H);if(S.mode==='carrusel')s=Math.min(sh/H,Math.max(sw/W,Math.min(sh/H,240/FMT[S.car.fmt][0])));s=Math.max(s,.05);V=s;
- const dpr=Math.min(2,devicePixelRatio||1);cv.style.width=W*s+'px';cv.style.height=H*s+'px';cv.width=Math.round(W*s*dpr);cv.height=Math.round(H*s*dpr);
+ const dpr=Math.min(2,devicePixelRatio||1);cv.style.width=W*s+'px';cv.style.height=H*s+'px';{const nw=Math.round(W*s*dpr),nh=Math.round(H*s*dpr);if(cv.width!==nw||cv.height!==nh){cv.width=nw;cv.height=nh}}
  cv.style.cursor=(brush.on||mnew)&&S.mode==='foto'?'crosshair':'default';render(ctx,s*dpr,false);if(cur==='ajustes')drawHist()})}
 new ResizeObserver(draw).observe(stage);
 
@@ -648,7 +667,7 @@ let HS=[],hi=-1;
 const snap=()=>JSON.stringify({S:{...S,texts:S.texts.map(({_bb,...t})=>t)},P:photos.map(p=>({id:p.id,adj:p.adj,lv:p.lv,f:p.f,bg:p.bg,v:p.v,ai:p.ai,curves:p.curves,hsl:p.hsl,masks:p.masks})),act});
 function commit(){const s=snap();if(HS[hi]===s)return;HS=HS.slice(0,hi+1);HS.push(s);if(HS.length>80)HS.shift();hi=HS.length-1}
 function restore(s){const o=JSON.parse(s);S=o.S;photos=o.P.map(q=>{const p=ALL.get(q.id);if(!p)return null;p.adj={...DEF,...q.adj};p.lv=q.lv;p.f=q.f;p.bg=q.bg;p.ai=q.ai;const fx=freshX();p.curves=q.curves||fx.curves;p.hsl=q.hsl||fx.hsl;p.masks=q.masks||fx.masks;if(p.v!==q.v)useVer(p,q.v);else p.cache={};return p}).filter(Boolean);act=clamp(o.act,0,Math.max(0,photos.length-1));sel=-1;selCell=null;refresh()}
-const undo=()=>{if(busy)return;if(hi>0){restore(HS[--hi]);toast('Cambio deshecho')}else toast('No hay más cambios que deshacer')},redo=()=>{if(busy)return;if(hi<HS.length-1){restore(HS[++hi]);toast('Cambio rehecho')}};
+const undo=()=>{if(S.mode==='video')return vUndo();if(busy)return;if(hi>0){restore(HS[--hi]);toast('Cambio deshecho')}else toast('No hay más cambios que deshacer')},redo=()=>{if(S.mode==='video')return vRedo();if(busy)return;if(hi<HS.length-1){restore(HS[++hi]);toast('Cambio rehecho')}};
 
 /* ---------- paneles ---------- */
 const slider=(k,l,v,mn,mx,attr)=>`<label class="sl"><span>${l}<output>${Math.round(v)}</output></span><input type="range" min="${mn}" max="${mx}" value="${v}" ${attr}="${k}"></label>`;
@@ -766,21 +785,21 @@ let histT=0;function drawHist(){clearTimeout(histT);histT=setTimeout(()=>{const 
  ['rgba(255,70,80,.75)','rgba(70,220,110,.75)','rgba(70,140,255,.75)'].forEach((col,ch)=>{x.fillStyle=col;x.beginPath();x.moveTo(0,Hh);for(let v=0;v<256;v++)x.lineTo(v/255*W,Hh-Math.min(1,H[ch][v]/mx)*(Hh-6));x.lineTo(W,Hh);x.closePath();x.fill()});x.globalCompositeOperation='source-over'},120)}
 function imgPt(X,Y){const p=photos[act],[W,H]=docSize(),T=coverT(p.src,W,H);return[(X-T.ox)/T.s/p.src.width,(Y-T.oy)/T.s/p.src.height]}
 function docPt(ix,iy){const p=photos[act],[W,H]=docSize(),T=coverT(p.src,W,H);return[T.ox+ix*p.src.width*T.s,T.oy+iy*p.src.height*T.s]}
-function openPanel(n){if(n!=='recortar')crop=null;if(n!=='zonas')mnew=null;cur=n;$('#tabs').innerHTML=TABS.map(([k,l])=>`<button class="${k===n?'on':''}" data-p="${k}">${icon(k)}${l}</button>`).join('');panel.innerHTML=P[n]();if(n==='filtros')previews();if(n==='ajustes'){initCurve();drawHist();panel.querySelectorAll('details.sec').forEach(d=>d.addEventListener('toggle',()=>{d.open?openSecs.add(d.dataset.sec):openSecs.delete(d.dataset.sec);if(d.open&&d.dataset.sec==='Curvas')initCurve()}))}}
-function film(){$('#film').innerHTML=`<label class="add"><input type="file" id="file" accept="image/*" multiple><b>+</b><span>Añadir fotos</span></label>`+photos.map((p,i)=>`<button class="th ${i===act?'on':''}" data-i="${i}" aria-label="${esc(p.name)}"><img src="${p.url}" alt=""><span class="x" data-rm="${i}" role="button" aria-label="Quitar foto">×</span></button>`).join('');
+function openPanel(n){if(n!=='recortar')crop=null;if(n!=='zonas')mnew=null;cur=n;$('#tabs').innerHTML=(S.mode==='video'?VTABS:TABS).map(([k,l])=>`<button class="${k===n?'on':''}" data-p="${k}">${icon(k)}${l}</button>`).join('');panel.innerHTML=P[n]();if(n==='filtros')previews();if(n==='ajustes'){initCurve();drawHist();panel.querySelectorAll('details.sec').forEach(d=>d.addEventListener('toggle',()=>{d.open?openSecs.add(d.dataset.sec):openSecs.delete(d.dataset.sec);if(d.open&&d.dataset.sec==='Curvas')initCurve()}))}}
+function film(){if(S.mode==='video')return vfilm();$('#film').innerHTML=`<label class="add"><input type="file" id="file" accept="image/*" multiple><b>+</b><span>Añadir fotos</span></label>`+photos.map((p,i)=>`<button class="th ${i===act?'on':''}" data-i="${i}" aria-label="${esc(p.name)}"><img src="${p.url}" alt=""><span class="x" data-rm="${i}" role="button" aria-label="Quitar foto">×</span></button>`).join('');
  $('#file').onchange=e=>loadFiles(e.target.files)}
-function bar(){const f=$('#fmt');f.hidden=S.mode==='carrusel';f.innerHTML=FMTL.map(([k,l])=>`<option value="${k}" ${S.fmt===k?'selected':''}>${l}</option>`).join('');
+function bar(){const f=$('#fmt');if(S.mode==='video'){f.hidden=false;f.innerHTML=VFMTL.map(([k,l])=>`<option value="${k}" ${VD.fmt===k?'selected':''}>${l}</option>`).join('');$('#chip').hidden=true;return}f.hidden=S.mode==='carrusel';f.innerHTML=FMTL.map(([k,l])=>`<option value="${k}" ${S.fmt===k?'selected':''}>${l}</option>`).join('');
  const c=$('#chip');if(selCell){c.hidden=false;c.className='pill hot';c.textContent=`Elige abajo la foto para ${selCell.k==='col'?'la celda':'el slide'} ${selCell.i+1}`}
  else if(brush.on){c.hidden=false;c.className='pill hot';c.textContent=brush.mode==='cadd'?'Pinta lo que quieres recuperar':brush.mode==='cdel'?'Pinta lo que sobra del fondo':'Pinta sobre lo que quieres borrar'}
  else{c.className='pill';c.textContent='Fotos de muestra generadas · añade las tuyas abajo';c.hidden=!photos.some(p=>p.sample)}}
-function refresh(){document.querySelectorAll('#modes button').forEach(b=>b.classList.toggle('on',b.dataset.m===S.mode));openPanel(cur);film();bar();draw()}
+function refresh(){$('.app').classList.toggle('vid',S.mode==='video');document.querySelectorAll('#modes button').forEach(b=>b.classList.toggle('on',b.dataset.m===S.mode));openPanel(cur);film();bar();draw()}
 function previews(){const p=photos[act];if(!p)return;panel.querySelectorAll('canvas[data-pv]').forEach(c=>{const i=+c.dataset.pv,f={...p,f:{n:i,k:p.f.k||100}},x=c.getContext('2d');x.fillStyle='#2c2a31';x.fillRect(0,0,120,150);drawFit(x,proc(f,150,p.th),0,0,120,150,p.th)})}
 const fontLoad=t=>document.fonts&&document.fonts.load(`${t.it?'italic ':''}${t.w} 40px "${t.font}"`).then(draw,()=>{});
 
 $('#tabs').onclick=e=>{const b=e.target.closest('[data-p]');if(!b)return;const k=b.dataset.p;if((k==='recortar'||k==='zonas')&&S.mode!=='foto')setMode('foto');if(k==='recortar'||k==='zonas')brush.on=false;if(k==='collage'&&S.mode!=='collage')setMode('collage');else if(k==='carrusel'&&S.mode!=='carrusel')setMode('carrusel');cur=k;refresh()};
-function setMode(m){S.mode=m;selCell=null;if(m==='carrusel'&&S.car.auto&&photos.length>1)S.car.n=clamp(photos.length,2,10);if(m!=='foto')brush.on=false;commit()}
-$('#modes').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;setMode(b.dataset.m);if(b.dataset.m!=='foto')cur=b.dataset.m;else if(cur==='collage'||cur==='carrusel')cur='ia';refresh()};
-$('#fmt').onchange=e=>{S.fmt=e.target.value;brush.strokes=[];commit();draw()};
+function setMode(m){if(S.mode==='video'&&m!=='video'&&vplay)vPause();S.mode=m;if(m==='video')vSamples();selCell=null;if(m==='carrusel'&&S.car.auto&&photos.length>1)S.car.n=clamp(photos.length,2,10);if(m!=='foto')brush.on=false;commit()}
+$('#modes').onclick=e=>{const b=e.target.closest('[data-m]');if(!b)return;setMode(b.dataset.m);if(b.dataset.m==='video'){if(!VTABS.some(z=>z[0]===cur))cur='vauto'}else if(b.dataset.m!=='foto')cur=b.dataset.m;else if(cur==='collage'||cur==='carrusel'||cur[0]==='v')cur='ia';refresh()};
+$('#fmt').onchange=e=>{if(S.mode==='video'){VD.fmt=e.target.value;vCommit();draw();return}S.fmt=e.target.value;brush.strokes=[];commit();draw()};
 $('#film').addEventListener('click',e=>{const rm=e.target.closest('[data-rm]');if(rm){e.stopPropagation();photos.splice(+rm.dataset.rm,1);act=clamp(act,0,Math.max(0,photos.length-1));S.col.map=[];S.car.map=[];selCell=null;commit();refresh();return}
  const b=e.target.closest('[data-i]');if(!b)return;const i=+b.dataset.i;if(selCell){S[selCell.k].map[selCell.i]=i;selCell=null}act=i;brush.strokes=[];msel=-1;if(crop)crop=newCrop();commit();refresh()});
 panel.addEventListener('input',e=>{const el=e.target,p=photos[act],t=S.texts[sel],v=el.value,o=el.parentElement.querySelector('output');if(o)o.textContent=Math.round(+v);
@@ -847,7 +866,7 @@ addEventListener('keydown',e=>{const typing=/INPUT|TEXTAREA|SELECT/.test(documen
 
 /* ---------- exportar ---------- */
 let dl=null,LAST=[];try{window.claude&&claude.use('downloads').then(d=>{dl=d;document.querySelectorAll('.dl').forEach(b=>b.hidden=!d)},()=>{})}catch(e){}
-$('#exp').onclick=()=>{if(!photos.length)return toast('Añade una foto primero');if(crop)return toast('Aplica el recorte primero, o sal de Recortar');const[W,H]=docSize(),c=mk(W,H);render(c.getContext('2d'),1,true);
+$('#exp').onclick=()=>{if(S.mode==='video')return vExport();if(!photos.length)return toast('Añade una foto primero');if(crop)return toast('Aplica el recorte primero, o sal de Recortar');const[W,H]=docSize(),c=mk(W,H);render(c.getContext('2d'),1,true);
  const png=S.mode==='foto'&&photos[act].under&&photos[act].bg.m==='none',ty=png?'image/png':'image/jpeg',ext=png?'png':'jpg';
  let outs=[];if(S.mode==='carrusel'){const[sw,sh]=FMT[S.car.fmt];for(let i=0;i<S.car.n;i++){const s=mk(sw,sh);s.getContext('2d').drawImage(c,i*sw,0,sw,sh,0,0,sw,sh);outs.push(s.toDataURL(ty,.93))}}else outs=[c.toDataURL(ty,.93)];
  LAST=outs.map((u,i)=>({u,name:`retoka-${S.mode}-${i+1}.${ext}`}));
@@ -858,6 +877,7 @@ $('#outs').addEventListener('click',async e=>{const b=e.target.closest('.dl');if
  try{await dl.save({filename:o.name,data:toBytes(o.u)});toast('Imagen guardada')}catch(err){const c=err&&err.code;if(c==='declined')return;if(c==='rate_limited')return toast('Espera un momento y vuelve a intentar');toast('No se pudo descargar aquí. Mantén presionada la imagen para guardarla.')}});
 $('#close').onclick=()=>{$('#mod').hidden=true};$('#mod').onclick=e=>{if(e.target.id==='mod')$('#mod').hidden=true};
 
+/*VIDEO_MODULE*/
 /* ---------- inicio ---------- */
 ['Atardecer','Lago','Bosque','Dunas'].forEach((n,i)=>addPhoto(scene(i),n,true));
 document.fonts&&document.fonts.ready.then(draw);
