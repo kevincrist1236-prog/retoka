@@ -17,6 +17,7 @@ const VDEF={exp:0,con:0,sat:0,temp:0,tint:0,vig:0,fade:0,grain:0};
 const VSFX=[['whoosh','Whoosh'],['riser','Subida'],['pop','Pop'],['click','Clic'],['impact','Impacto'],['drop','Bajo'],['ding','Ding'],['camera','Cámara'],['glitch','Glitch'],['notif','Notificación'],['typing','Teclado'],['swipe','Deslizar']];
 const VTR=[['none','Ninguna'],['fade','Fundido'],['black','A negro'],['slide','Deslizar'],['zoom','Zoom']];
 const VANIM=[['none','Ninguna'],['fade','Aparecer'],['pop','Pop'],['up','Subir'],['type','Máquina de escribir']];
+let VCLIP=null,vzf=1;
 let VD={fmt:'9:16',clips:[],texts:[],sfx:[],music:null,letterbox:0,t:0,sel:0,tsel:-1,vol:1},SRC={},vuid=0,vplay=false,vcur=-1,vprevT=0,vlastPerf=0,vsnap=null,vsnapFor=-1,vLastI=-1,MUS=null,actx=null,SFXB={},VHS_=[],vhi=-1,vbusy=false,vpps=60;
 
 /* ---------- fuentes y clips ---------- */
@@ -223,11 +224,10 @@ const VP={
 Object.assign(P,VP);
 
 /* ---------- línea de tiempo ---------- */
-function vfilm(){const tot=vTotal(),el=$('#film'),avail=Math.max(200,el.clientWidth-24);vpps=clamp(avail/Math.max(tot,1),24,140);const L=vLay(),W=Math.max(avail,tot*vpps+20);
+function vfilm(){const tot=vTotal(),el=$('#film'),avail=Math.max(200,el.clientWidth-24);vpps=clamp(avail/Math.max(tot,1),24,140)*vzf;const L=vLay(),W=Math.max(avail,tot*vpps+20);
  const ticks=[];const step=tot>60?10:tot>20?5:1;for(let s=0;s<=tot;s+=step)ticks.push(`<span style="left:${s*vpps+8}px">${fmtT(s).replace(/\.\d$/,'')}</span>`);
  el.innerHTML=`<div class="tl"><div class="tlbar"><button class="ib" id="vplay" aria-label="Reproducir"></button><span id="vtime" class="hint"></span><span style="flex:1"></span>
-  <button class="ib" data-vt2="split" title="Dividir" aria-label="Dividir en el cursor"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v18M8 7l-4 5 4 5M16 7l4 5-4 5"/></svg></button>
-  <button class="ib" data-vt2="del" title="Eliminar clip" aria-label="Eliminar clip"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
+  ${[['split','Dividir (S)','<path d="M12 3v18M8 7l-4 5 4 5M16 7l4 5-4 5"/>'],['cut','Cortar (Ctrl+X)','<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/>'],['copy','Copiar (Ctrl+C)','<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/>'],['paste','Pegar (Ctrl+V)','<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V2h6v2M9 11h6M9 15h4"/>'],['dup','Duplicar (Ctrl+D)','<rect x="3" y="7" width="12" height="12" rx="2"/><path d="M9 3h10a2 2 0 0 1 2 2v10"/>'],['del','Eliminar (Supr)','<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'],['zout','Alejar línea de tiempo','<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4M8 11h6"/>'],['zin','Acercar línea de tiempo','<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4M8 11h6M11 8v6"/>']].map(([k,l,ic])=>`<button class="ib ${k==='paste'&&!VCLIP?'dim':''}" data-vt2="${k}" title="${l}" aria-label="${l}"><svg class="i" viewBox="0 0 24 24">${ic}</svg></button>`).join('')}
   <label class="ib" title="Añadir" aria-label="Añadir videos o fotos" style="cursor:pointer"><input type="file" id="vfile" accept="video/*,image/*" multiple style="display:none"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></label></div>
   <div class="tls" id="vscroll"><div class="tlt" id="vtrack" style="width:${W}px"><div class="ruler">${ticks.join('')}</div>
   <div class="trow">${L.map((o,i)=>`<div class="clip ${i===VD.sel?'on':''}" data-ci="${i}" style="left:${o.start*vpps+8}px;width:${Math.max(6,o.dur*vpps-2)}px;background-image:url(${SRC[o.c.src]?SRC[o.c.src].thumb:''})">${o.c.tr.type!=='none'&&i?'<i class="trm"></i>':''}<b>${o.dur.toFixed(1)}s</b></div>`).join('')}</div>
@@ -241,16 +241,20 @@ document.addEventListener('pointerdown',e=>{if(S.mode!=='video')return;const tr=
  const ti=e.target.closest('[data-ti]');if(ti){VD.tsel=+ti.dataset.ti;cur='vtext';vSeek(VD.texts[VD.tsel].start+.01);refresh();return}
  if(vplay)vPause();vSeek(vTrackT(e));const ci=e.target.closest('[data-ci]');if(ci){VD.sel=+ci.dataset.ci;if(!['vedit','vcolor','vfx'].includes(cur))cur='vedit'}refresh();
  const mv=ev=>{vSeek(vTrackT(ev))},up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up)};addEventListener('pointermove',mv);addEventListener('pointerup',up)});
-document.addEventListener('click',e=>{if(S.mode!=='video')return;if(e.target.closest('#vplay')){vplay?vPause():vPlay();return}const b=e.target.closest('[data-vt2]');if(b){vAct(b.dataset.vt2==='split'?'vsplit':'vdel');}});
+document.addEventListener('click',e=>{if(S.mode!=='video')return;if(e.target.closest('#vplay')){vplay?vPause():vPlay();return}const b=e.target.closest('[data-vt2]');if(b){const k=b.dataset.vt2;if(k==='zin'||k==='zout'){vzf=clamp(vzf*(k==='zin'?1.5:1/1.5),.4,12);film();return}vAct('v'+k)}});
 
 /* ---------- acciones ---------- */
 function vAct(a,v,el){const c=vClip(),t=VD.texts[VD.tsel];let keep=false;
  const A={
   vpre:()=>{applyPreset(v);keep=true},vsil:async()=>{keep=true;vbusy=true;openPanel(cur);const r=await removeSilences();vbusy=false;vCommit();VD.last=r.cut?`Quité ${r.cut} silencios (${r.saved.toFixed(1)} s).`:r.noA?'No encontré audio en los videos.':'No había silencios largos.';vRefresh();toast(VD.last)},
   vsplit:()=>{const at=vAt(VD.t);if(!at)return;const x=at.c,loc=at.local;if(loc-x.in<.1||x.out-loc<.1)return toast('Mueve el cursor dentro del clip para dividir');const n=JSON.parse(JSON.stringify(x));n.id=++vuid;n.in=loc;x.out=loc;n.tr={type:'none',d:.45};VD.clips.splice(at.i+1,0,n);VD.sel=at.i+1;toast('Clip dividido')},
-  vdup:()=>{if(!c)return;const n=JSON.parse(JSON.stringify(c));n.id=++vuid;VD.clips.splice(VD.sel+1,0,n);VD.sel++},
+  vcopy:()=>{const tx=cur==='vtext'&&t;if(tx){const{_bb,...z}=t;VCLIP={k:'text',d:JSON.parse(JSON.stringify(z))}}else if(c)VCLIP={k:'clip',d:JSON.parse(JSON.stringify(c))};else return;keep=true;film();toast(tx?'Texto copiado':'Clip copiado')},
+  vcut:()=>{const tx=cur==='vtext'&&t;if(tx){const{_bb,...z}=t;VCLIP={k:'text',d:JSON.parse(JSON.stringify(z))};VD.texts.splice(VD.tsel,1);VD.tsel=-1;toast('Texto cortado')}else if(c){VCLIP={k:'clip',d:JSON.parse(JSON.stringify(c))};VD.clips.splice(VD.sel,1);VD.sel=clamp(VD.sel,0,Math.max(0,VD.clips.length-1));VD.t=Math.min(VD.t,vTotal());toast('Clip cortado')}},
+  vpaste:()=>{if(!VCLIP)return toast('Primero copia o corta un clip o texto');if(VCLIP.k==='text'){const n=JSON.parse(JSON.stringify(VCLIP.d)),d=n.end-n.start;n.start=VD.t;n.end=VD.t+d;VD.texts.push(n);VD.tsel=VD.texts.length-1;cur='vtext';toast('Texto pegado en '+fmtT(VD.t))}
+   else{const n=JSON.parse(JSON.stringify(VCLIP.d));n.id=++vuid;if(!SRC[n.src])return toast('Ese clip ya no está disponible');const at=vAt(VD.t),pos=at?at.i+1:VD.clips.length;VD.clips.splice(pos,0,n);VD.sel=pos;vSeek(vLay()[pos].start);toast('Clip pegado')}},
+  vdup:()=>{if(cur==='vtext'&&t){const{_bb,...z}=t,n=JSON.parse(JSON.stringify(z));n.x+=30;n.y+=30;VD.texts.push(n);VD.tsel=VD.texts.length-1;return}if(!c)return;const n=JSON.parse(JSON.stringify(c));n.id=++vuid;VD.clips.splice(VD.sel+1,0,n);VD.sel++},
   vmove:()=>{const j=VD.sel+(+v);if(!c||j<0||j>=VD.clips.length)return;VD.clips.splice(VD.sel,1);VD.clips.splice(j,0,c);VD.sel=j},
-  vdel:()=>{if(!c)return;VD.clips.splice(VD.sel,1);VD.sel=clamp(VD.sel,0,Math.max(0,VD.clips.length-1));VD.t=Math.min(VD.t,vTotal())},
+  vdel:()=>{if(cur==='vtext'&&t){VD.texts.splice(VD.tsel,1);VD.tsel=-1;return}if(!c)return;VD.clips.splice(VD.sel,1);VD.sel=clamp(VD.sel,0,Math.max(0,VD.clips.length-1));VD.t=Math.min(VD.t,vTotal())},
   vspeed:()=>{if(c)c.speed=+v},vtr:()=>{if(c)c.tr={type:v,d:v==='slide'?.35:.45}},
   vlook:()=>{if(c)c.look=+v},vcolall:()=>{if(c)VD.clips.forEach(x=>{x.look=c.look;x.adj={...c.adj}})},vcolreset:()=>{if(c){c.look=0;c.adj={...VDEF}}},
   vzoom:()=>{if(c)c.fx.zoom=v},vfxt:()=>{if(c)c.fx[v]=c.fx[v]?0:1},vlbox:()=>{VD.letterbox=VD.letterbox?0:1},vfxall:()=>{if(c)VD.clips.forEach(x=>{x.fx={...c.fx}})},
@@ -313,4 +317,7 @@ async function vExport(){if(!VD.clips.length)return toast('Añade un video prime
  catch(e){console.error(e);st('No se pudo exportar el video: '+(e&&e.message||e),0)}finally{vLastI=-1;draw()}}
 
 /* ---------- integración con la app ---------- */
-document.addEventListener('keydown',e=>{if(S.mode!=='video')return;const typing=/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);if(e.code==='Space'&&!typing){e.preventDefault();vplay?vPause():vPlay()}},true);
+document.addEventListener('keydown',e=>{if(S.mode!=='video')return;const typing=/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);if(typing)return;const k=e.key.toLowerCase(),m=e.ctrlKey||e.metaKey;
+ const go=a=>{e.preventDefault();e.stopImmediatePropagation();vAct(a)};
+ if(e.code==='Space'){e.preventDefault();vplay?vPause():vPlay()}else if(m&&k==='x')go('vcut');else if(m&&k==='c')go('vcopy');else if(m&&k==='v')go('vpaste');else if(m&&k==='d')go('vdup');
+ else if(!m&&k==='s')go('vsplit');else if(k==='delete'||k==='backspace')go('vdel');else if(k==='arrowleft'||k==='arrowright'){e.preventDefault();vSeek(VD.t+(k==='arrowleft'?-1:1)*(e.shiftKey?1:1/30))}},true);
