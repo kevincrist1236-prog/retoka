@@ -22,6 +22,13 @@ Editor de fotos con IA, fácil para principiantes y más asequible que las herra
 - **Audio:** música propia con entrada y salida suave, 12 efectos de sonido propios (sintetizados en la app, sin licencias de terceros).
 - **Exportar MP4** 1080p (H.264) con audio, directamente en el navegador.
 
+## IA de video y créditos (nuevo)
+
+- **Editar con IA (Pro):** la IA escucha el video (modelo de voz Whisper que corre en el navegador del usuario), quita muletillas y pausas, pone subtítulos con palabras clave, zooms y sonidos.
+- **Subtítulos automáticos** con estilos Cinético, Karaoke y Caja, y **quitar muletillas**.
+- **Créditos:** cada función de IA cuesta créditos; planes Gratis y Pro. En el prototipo los créditos son simulados (se guardan en el navegador), sin cobros reales.
+- La IA de voz necesita la app publicada (GitHub Pages); dentro de Claude no puede descargar el modelo.
+
 ## Estructura
 
 ```

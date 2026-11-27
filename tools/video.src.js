@@ -18,7 +18,7 @@ const VSFX=[['whoosh','Whoosh'],['riser','Subida'],['pop','Pop'],['click','Clic'
 const VTR=[['none','Ninguna'],['fade','Fundido'],['black','A negro'],['slide','Deslizar'],['zoom','Zoom']];
 const VANIM=[['none','Ninguna'],['fade','Aparecer'],['pop','Pop'],['up','Subir'],['type','Máquina de escribir']];
 let VCLIP=null,vzf=1,vtrim=null;
-let VD={fmt:'9:16',clips:[],texts:[],sfx:[],music:null,letterbox:0,t:0,sel:0,tsel:-1,vol:1},SRC={},vuid=0,vplay=false,vcur=-1,vprevT=0,vlastPerf=0,vsnap=null,vsnapFor=-1,vLastI=-1,MUS=null,actx=null,SFXB={},VHS_=[],vhi=-1,vbusy=false,vpps=60;
+let VD={fmt:'9:16',clips:[],texts:[],sfx:[],caps:[],capSt:{st:'cinetico',size:78,y:.7,up:1},music:null,letterbox:0,t:0,sel:0,tsel:-1,vol:1},SRC={},vuid=0,vplay=false,vcur=-1,vprevT=0,vlastPerf=0,vsnap=null,vsnapFor=-1,vLastI=-1,MUS=null,actx=null,SFXB={},VHS_=[],vhi=-1,vbusy=false,vpps=60;
 
 /* ---------- fuentes y clips ---------- */
 const vLay=()=>{let s=0;return VD.clips.map(c=>{const d=Math.max(.05,(c.out-c.in)/c.speed),o={c,start:s,dur:d};s+=d;return o})};
@@ -88,6 +88,7 @@ function vrender(x,sc,exp,tt){const[W,H]=docSize();x.setTransform(sc,0,0,sc,0,0)
  else x.drawImage(out,0,0,W,H);
  if(a.c.fx.flash&&a.e<.3){x.fillStyle=`rgba(255,255,255,${(1-a.e/.3)*.85})`;x.fillRect(0,0,W,H)}
  if(VD.letterbox){const b=Math.max(0,(H-W/2.35)/2)*(W>H?1:.42);x.fillStyle='#000';x.fillRect(0,0,W,b);x.fillRect(0,H-b,W,b)}
+ drawCaps(x,tt,W,H);
  VD.texts.forEach(t=>vTextDraw(x,t,tt));
  if(!exp&&!vplay){const t=VD.texts[VD.tsel];if(t&&t._bb&&tt>=t.start&&tt<=t.end){x.setLineDash([10/V,6/V]);x.strokeStyle='#ef3b4f';x.lineWidth=2.5/V;x.strokeRect(...t._bb);x.setLineDash([])}}}
 
@@ -173,9 +174,9 @@ async function applyPreset(k){if(!VD.clips.length)return toast('Añade un video 
 function setStatusV(t){const e=$('#vst');if(e)e.textContent=t}
 
 /* ---------- historial ---------- */
-const vSnap=()=>JSON.stringify({c:VD.clips,t:VD.texts.map(({_bb,...x})=>x),s:VD.sfx,m:VD.music,l:VD.letterbox,f:VD.fmt,v:VD.vol});
+const vSnap=()=>JSON.stringify({c:VD.clips,t:VD.texts.map(({_bb,...x})=>x),s:VD.sfx,m:VD.music,l:VD.letterbox,f:VD.fmt,v:VD.vol,k:VD.caps,ks:VD.capSt});
 function vCommit(){const s=vSnap();if(VHS_[vhi]===s)return;VHS_=VHS_.slice(0,vhi+1);VHS_.push(s);if(VHS_.length>60)VHS_.shift();vhi=VHS_.length-1}
-function vRestore(s){const o=JSON.parse(s);VD.clips=o.c;VD.texts=o.t;VD.sfx=o.s;VD.music=o.m;VD.letterbox=o.l;VD.fmt=o.f;VD.vol=o.v;VD.sel=clamp(VD.sel,0,Math.max(0,VD.clips.length-1));VD.tsel=-1;VD.t=Math.min(VD.t,vTotal());vRefresh()}
+function vRestore(s){const o=JSON.parse(s);VD.clips=o.c;VD.texts=o.t;VD.sfx=o.s;VD.music=o.m;VD.letterbox=o.l;VD.fmt=o.f;VD.vol=o.v;VD.caps=o.k||[];VD.capSt=o.ks||VD.capSt;VD.sel=clamp(VD.sel,0,Math.max(0,VD.clips.length-1));VD.tsel=-1;VD.t=Math.min(VD.t,vTotal());vRefresh()}
 const vUndo=()=>{if(vhi>0){vRestore(VHS_[--vhi]);toast('Cambio deshecho')}else toast('No hay más cambios que deshacer')},vRedo=()=>{if(vhi<VHS_.length-1){vRestore(VHS_[++vhi]);toast('Cambio rehecho')}};
 
 /* ---------- paneles ---------- */
@@ -183,11 +184,14 @@ const vClip=()=>VD.clips[VD.sel];
 const vsl=(k,l,v,mn,mx,st,attr,fmt)=>`<label class="sl"><span>${l}<output>${fmt?fmt(v):Math.round(v*100)}</output></span><input type="range" min="${mn}" max="${mx}" step="${st}" value="${v}" ${attr}="${k}"></label>`;
 const vnone=t=>`<h2>${t}</h2><p class="sub">Añade un video o fotos en la línea de tiempo de abajo.</p>`;
 const VP={
- vauto:()=>`<h2>Edición en 1 toque</h2><p class="sub">Elige un estilo y Retoka edita tu video por ti: cortes, ritmo, color y sonido. Luego puedes ajustar lo que quieras.</p>
+ vauto:()=>`<h2>Edición en 1 toque</h2><p class="sub">Retoka edita tu video por ti. Luego puedes ajustar lo que quieras.</p>
   <div id="vst" class="st">${vbusy?'Retoka está editando tu video…':esc(VD.last||'')}</div>
+  <div class="card hero"><b>Editar con IA <span class="probadge">PRO</span></b><p>La IA escucha tu video, quita muletillas y pausas, pone subtítulos con palabras clave, zooms y sonidos. Tú solo publicas.</p><button class="wb" data-act="vai" data-v="full" ${vbusy?'disabled':''}>${icon('ia')}Editar con IA · ${COST.vai} créditos</button>
+   <div class="row" style="margin-top:8px"><button class="gb" style="flex:1" data-act="vai" data-v="subs" ${vbusy?'disabled':''}>Solo subtítulos · ${COST.vsub}</button><button class="gb" style="flex:1" data-act="vai" data-v="fill" ${vbusy?'disabled':''}>Quitar muletillas · ${COST.vfill}</button></div></div>
+  <h3>Estilos rápidos (gratis)</h3>
   ${VPRE.map(p=>`<div class="card"><b>${p.n}</b><p>${p.d}</p><button class="wb" data-act="vpre" data-v="${p.k}" ${vbusy?'disabled':''}>Aplicar</button></div>`).join('')}
   <div class="card"><b>Quitar silencios</b><p>Corta las pausas largas de tus videos hablando a cámara.</p><button class="gb full" data-act="vsil" ${vbusy?'disabled':''}>Quitar silencios</button></div>
-  <h3>Próximamente en Retoka Pro</h3><div class="soon"><div>Subtítulos automáticos<i>Pro · pronto</i></div><div>Quitar muletillas<i>Pro · pronto</i></div></div>`,
+`,
  vedit:()=>{const c=vClip();if(!c)return vnone('Editar');const s=SRC[c.src],img=s.type==='img';
   return `<h2>Editar clip ${VD.sel+1}</h2><p class="sub">${esc(s.name||'')} · ${fmtT((c.out-c.in)/c.speed)}</p>
   <div class="row"><button class="gb" data-act="vsplit">Dividir en el cursor</button><button class="gb" data-act="vdup">Duplicar</button><button class="gb" data-act="vmove" data-v="-1">← Mover</button><button class="gb" data-act="vmove" data-v="1">Mover →</button><button class="gb" data-act="vdel" style="color:var(--acc)">Eliminar</button></div>
@@ -205,7 +209,8 @@ const VP={
   <h3>Efectos</h3><div class="chips">${[['shake','Sacudida'],['flash','Destello'],['vhs','Retro VHS'],['bw','Blanco y negro']].map(([k,l])=>`<button class="ch ${c.fx[k]?'on':''}" data-act="vfxt" data-v="${k}">${l}</button>`).join('')}</div>
   <h3>Todo el video</h3><div class="chips"><button class="ch ${VD.letterbox?'on':''}" data-act="vlbox">Franjas de cine</button></div>
   <button class="gb full" data-act="vfxall">Aplicar estos efectos a todos los clips</button>`},
- vtext:()=>{const t=VD.texts[VD.tsel];let h=`<h2>Texto</h2><p class="sub">Toca un estilo para añadirlo en el cursor. Arrástralo sobre el video.</p><div class="tpre">${TP.map((s,i)=>`<button data-act="vtp" data-v="${i}" style="font-family:'${s.font}';font-weight:${s.w};${s.it?'font-style:italic;':''}font-size:${clamp(s.size/4,15,26)}px">${s.l}</button>`).join('')}</div>`;
+ vtext:()=>{const t=VD.texts[VD.tsel],cs=VD.capSt;let h=(VD.caps.length?`<div class="card"><b>Subtítulos (${VD.caps.length})</b><p>Estilo, tamaño y posición.</p><div class="chips">${[['cinetico','Cinético'],['karaoke','Karaoke'],['caja','Caja']].map(([k,l])=>`<button class="ch ${cs.st===k?'on':''}" data-act="vcap" data-v="${k}">${l}</button>`).join('')}<button class="ch ${cs.up?'on':''}" data-act="vcapup">MAYÚSCULAS</button><button class="ch ${cs.off?'on':''}" data-act="vcapoff">Ocultar</button></div>
+   ${vsl('size','Tamaño',cs.size,40,140,1,'data-vcs',v=>Math.round(v))}${vsl('y','Posición',cs.y,.15,.9,.01,'data-vcs',v=>Math.round(v*100)+'%')}<div class="row"><button class="gb" data-act="vcapre">Recolocar tras editar</button><button class="gb" data-act="vcapdel" style="color:var(--acc)">Quitar subtítulos</button></div></div>`:'')+`<h2>Texto</h2><p class="sub">Toca un estilo para añadirlo en el cursor. Arrástralo sobre el video.</p><div class="tpre">${TP.map((s,i)=>`<button data-act="vtp" data-v="${i}" style="font-family:'${s.font}';font-weight:${s.w};${s.it?'font-style:italic;':''}font-size:${clamp(s.size/4,15,26)}px">${s.l}</button>`).join('')}</div>`;
   if(VD.texts.length)h+=`<h3>Textos</h3><div class="chips">${VD.texts.map((x,i)=>`<button class="ch ${i===VD.tsel?'on':''}" data-act="vtsel" data-v="${i}">${esc(x.text.split('\n')[0].slice(0,14))}</button>`).join('')}</div>`;
   if(!t)return h;return h+`<h3>Editar texto</h3><textarea data-vt="text" aria-label="Texto">${esc(t.text)}</textarea>
   <h3>Cuándo aparece</h3>${vsl('start','Aparece',t.start,0,Math.max(.1,vTotal()),.05,'data-vt',v=>fmtT(+v))}${vsl('end','Desaparece',t.end,0,Math.max(.1,vTotal()),.05,'data-vt',v=>fmtT(+v))}
@@ -252,7 +257,7 @@ document.addEventListener('click',e=>{if(S.mode!=='video')return;if(e.target.clo
 /* ---------- acciones ---------- */
 function vAct(a,v,el){const c=vClip(),t=VD.texts[VD.tsel];let keep=false;
  const A={
-  vpre:()=>{applyPreset(v);keep=true},vsil:async()=>{keep=true;vbusy=true;openPanel(cur);const r=await removeSilences();vbusy=false;vCommit();VD.last=r.cut?`Quité ${r.cut} silencios (${r.saved.toFixed(1)} s).`:r.noA?'No encontré audio en los videos.':'No había silencios largos.';vRefresh();toast(VD.last)},
+  vpre:()=>{applyPreset(v);keep=true},vai:()=>{vAI(v);keep=true},vcap:()=>{VD.capSt.st=v},vcapup:()=>{VD.capSt.up=VD.capSt.up?0:1},vcapoff:()=>{VD.capSt.off=VD.capSt.off?0:1},vcapre:()=>{buildCaps();toast('Subtítulos recolocados')},vcapdel:()=>{VD.caps=[]},vsil:async()=>{keep=true;vbusy=true;openPanel(cur);const r=await removeSilences();vbusy=false;vCommit();VD.last=r.cut?`Quité ${r.cut} silencios (${r.saved.toFixed(1)} s).`:r.noA?'No encontré audio en los videos.':'No había silencios largos.';vRefresh();toast(VD.last)},
   vsplit:()=>{const at=vAt(VD.t);if(!at)return;const x=at.c,loc=at.local;if(loc-x.in<.1||x.out-loc<.1)return toast('Mueve el cursor dentro del clip para dividir');const n=JSON.parse(JSON.stringify(x));n.id=++vuid;n.in=loc;x.out=loc;n.tr={type:'none',d:.45};VD.clips.splice(at.i+1,0,n);VD.sel=at.i+1;toast('Clip dividido')},
   vcopy:()=>{const tx=cur==='vtext'&&t;if(tx){const{_bb,...z}=t;VCLIP={k:'text',d:JSON.parse(JSON.stringify(z))}}else if(c)VCLIP={k:'clip',d:JSON.parse(JSON.stringify(c))};else return;keep=true;film();toast(tx?'Texto copiado':'Clip copiado')},
   vcut:()=>{const tx=cur==='vtext'&&t;if(tx){const{_bb,...z}=t;VCLIP={k:'text',d:JSON.parse(JSON.stringify(z))};VD.texts.splice(VD.tsel,1);VD.tsel=-1;toast('Texto cortado')}else if(c){VCLIP={k:'clip',d:JSON.parse(JSON.stringify(c))};VD.clips.splice(VD.sel,1);VD.sel=clamp(VD.sel,0,Math.max(0,VD.clips.length-1));VD.t=Math.min(VD.t,vTotal());toast('Clip cortado')}},
@@ -276,6 +281,7 @@ panel.addEventListener('input',e=>{if(S.mode!=='video')return;const el=e.target,
  else if(el.dataset.vfx&&c){c.fx[el.dataset.vfx]=v;if(o)o.textContent=Math.round((v-1)*100)+'%'}
  else if(el.dataset.vt&&t){const k=el.dataset.vt;t[k]=k==='text'?el.value:v;if(o)o.textContent=k==='size'?Math.round(v):fmtT(v);if(k==='start'||k==='end')vSeek(t[k]-(k==='end'?.05:-.01))}
  else if(el.dataset.vm&&VD.music){VD.music.vol=v;if(o)o.textContent=Math.round(v*100);vSyncMusic(false)}
+ else if(el.dataset.vcs){VD.capSt[el.dataset.vcs]=v;if(o)o.textContent=el.dataset.vcs==='y'?Math.round(v*100)+'%':Math.round(v)}
  else if(el.dataset.vg){VD.vol=v;if(o)o.textContent=Math.round(v*100)}else return;e.stopImmediatePropagation();draw()},true);
 panel.addEventListener('change',e=>{if(S.mode!=='video')return;if(e.target.id==='vmusic'){const f=e.target.files[0];if(!f)return;const el=new Audio(URL.createObjectURL(f));el.preload='auto';MUS={el,file:f,buffer:null};VD.music={name:f.name,vol:.6,fin:1,fout:1};vCommit();refresh();toast('Música añadida');e.stopImmediatePropagation();return}
  e.stopImmediatePropagation();vCommit();if(e.target.dataset.vt==='start'||e.target.dataset.vt==='end'||e.target.dataset.vc)film()},true);
@@ -302,7 +308,7 @@ let muxLib=null;const loadMux=()=>muxLib||(muxLib=new Promise((ok,no)=>{const s=
 async function vExport(){if(!VD.clips.length)return toast('Añade un video primero');if(vplay)vPause();const[W,H]=docSize(),tot=vTotal(),fps=30,N=Math.max(1,Math.round(tot*fps));
  if(!window.VideoEncoder)return toast('Tu navegador no puede crear MP4. Actualiza Chrome o Safari.');
  const{V0,A0}=await pickCfg(W,H);if(!V0)return toast('Tu navegador no puede codificar video en este formato.');
- $('#outs').innerHTML=`<div style="grid-column:1/-1"><p id="vxp">Preparando…</p><div class="prog"><i id="vxb"></i></div><button class="gb" id="vxc" style="margin-top:10px">Cancelar</button></div>`;$('#mod').hidden=false;
+ $('#outs').innerHTML=`<div style="grid-column:1/-1"><p id="vxp">Preparando…</p><div class="prog"><i id="vxb"></i></div><button class="gb" id="vxc" style="margin-top:10px">Cancelar</button></div>`;document.querySelector('#mod h2').textContent='Exportando video';$('#exphint').hidden=true;$('#mod').hidden=false;
  let cancel=false;$('#vxc').onclick=()=>{cancel=true};const st=(t,p)=>{$('#vxp').textContent=t;if(p!=null)$('#vxb').style.width=p+'%'};
  try{const lib=await loadMux();st('Mezclando el audio…',2);const mixed=await mixAudio(tot);
   const tgt=new lib.ArrayBufferTarget(),mux=new lib.Muxer({target:tgt,video:{codec:V0.m,width:W,height:H,frameRate:fps},audio:mixed&&A0?{codec:A0.m,numberOfChannels:2,sampleRate:48000}:undefined,fastStart:'in-memory',firstTimestampBehavior:'offset'});
@@ -322,7 +328,63 @@ async function vExport(){if(!VD.clips.length)return toast('Añade un video prime
   const b=$('#vxdl');if(b)b.onclick=async()=>{try{await dl.save({filename:name,data:blob});toast('Video guardado')}catch(e){if(e&&e.code!=='declined')toast('No se pudo descargar aquí')}}}
  catch(e){console.error(e);st('No se pudo exportar el video: '+(e&&e.message||e),0)}finally{vLastI=-1;draw()}}
 
+/* ---------- IA de video: voz a texto, muletillas, subtítulos ---------- */
+const STOP=new Set('de la que el en y a los se del las un por con no una su para es al lo como más pero sus le ya o este sí porque esta entre cuando muy sin sobre también me hasta hay donde quien desde todo nos durante todos uno les ni contra otros ese eso ante ellos e esto mí antes algunos qué unos yo otro otras otra él tanto esa estos mucho quienes nada muchos cual poco ella estar estas algunas algo nosotros mi mis tú te ti tu tus ellas nosotras vosotros os mío mía tuyo suyo nuestro vuestro esos esas estoy estás está estamos están ser soy eres somos son era fue tengo tiene tienen hacer hace voy vas va vamos van'.split(' '));
+const FILL=new Set(['eh','ehh','ehhh','ehm','em','emm','mm','mmm','hmm','hm','ah','ahh','uh','um','umm','eeh','eee','mmh','esteee','esteeee']);
+const norm=w=>w.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-zñ0-9]/g,'');
+const ASR_CODE=`import {pipeline,env} from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/dist/transformers.min.js';
+env.allowLocalModels=false;let P=null;const M='onnx-community/whisper-base_timestamped';
+const prog=id=>p=>{if(p.status==='progress'&&p.total)self.postMessage({id,load:p.loaded/p.total})};
+self.onmessage=async e=>{const{id,audio}=e.data;try{if(!P){try{P=await pipeline('automatic-speech-recognition',M,{dtype:'q8',device:'wasm',progress_callback:prog(id)})}catch(err){P=await pipeline('automatic-speech-recognition',M,{dtype:'fp32',device:'wasm',progress_callback:prog(id)})}}
+ const r=await P(audio,{language:'spanish',task:'transcribe',return_timestamps:'word'});
+ self.postMessage({id,words:(r.chunks||[]).map(c=>({w:String(c.text||'').trim(),s:c.timestamp[0],e:c.timestamp[1]==null?c.timestamp[0]+.25:c.timestamp[1]})).filter(x=>x.w)})}
+ catch(err){self.postMessage({id,error:String(err&&err.message||err)})}};`;
+let ASRW=null,asrN=0;const asrWait={};
+function asrWorker(){if(ASRW)return ASRW;ASRW=new Worker(URL.createObjectURL(new Blob([ASR_CODE],{type:'text/javascript'})),{type:'module'});
+ ASRW.onmessage=e=>{const d=e.data,h=asrWait[d.id];if(!h)return;if(d.load!=null)return h.onLoad&&h.onLoad(d.load);delete asrWait[d.id];d.error?h.no(new Error(d.error)):h.ok(d.words)};
+ ASRW.onerror=e=>{Object.values(asrWait).forEach(h=>h.no(new Error(e.message||'No se pudo iniciar el modelo de voz')));for(const k in asrWait)delete asrWait[k];ASRW=null};return ASRW}
+function asrRun(audio,onLoad){return new Promise((ok,no)=>{const id=++asrN;asrWait[id]={ok,no,onLoad};asrWorker().postMessage({id,audio},[audio.buffer])})}
+async function transcribe(s,st){if(s.words)return s.words;const b=await decodeAudio(s);if(!b)throw new Error('Este video no tiene audio que se pueda leer');
+ st('Preparando el audio…');const O=window.OfflineAudioContext||window.webkitOfflineAudioContext,c=new O(1,Math.ceil(b.duration*16000),16000),n=c.createBufferSource();n.buffer=b;n.connect(c.destination);n.start();const mono=(await c.startRendering()).getChannelData(0);
+ const segs=(await speechSegs(s,0,b.duration))||[[0,b.duration]],wins=[];let ws=null,we=0;
+ for(const[a,z]of segs){if(ws==null){ws=Math.max(0,a-.2);we=z}else if(z-ws<=28)we=z;else{wins.push([ws,we+.2]);ws=Math.max(0,a-.2);we=z}while(we-ws>28){wins.push([ws,ws+28]);ws+=28}}if(ws!=null)wins.push([ws,Math.min(b.duration,we+.2)]);
+ const words=[];for(let k=0;k<wins.length;k++){const[a,z]=wins[k],seg=mono.slice(Math.floor(a*16000),Math.floor(z*16000));
+  st(`Escuchando tu video… ${Math.round(k/wins.length*100)}%`);const r=await asrRun(seg,f=>st(`Descargando el modelo de voz (solo la primera vez)… ${Math.round(f*100)}%`));r.forEach(w=>words.push({w:w.w,s:a+w.s,e:a+Math.max(w.e,w.s+.05)}))}
+ s.words=words;return words}
+function mapWords(){const out=[];vLay().forEach(o=>{const s=SRC[o.c.src];if(!s||!s.words)return;s.words.forEach(w=>{const m=(w.s+w.e)/2;if(m>=o.c.in&&m<=o.c.out)out.push({w:w.w,s:o.start+Math.max(0,w.s-o.c.in)/o.c.speed,e:o.start+Math.min(o.c.out-o.c.in,w.e-o.c.in)/o.c.speed})})});return out.sort((a,b)=>a.s-b.s)}
+function buildCaps(){const ws=mapWords().filter(w=>!FILL.has(norm(w.w))),caps=[];let cur=[],len=0;
+ const push=()=>{if(!cur.length)return;let best=-1,bl=5;cur.forEach((w,i)=>{const n=norm(w.w);if(n.length>bl&&!STOP.has(n)){bl=n.length;best=i}});caps.push({s:cur[0].s,e:cur[cur.length-1].e,words:cur.map((w,i)=>({w:w.w.replace(/^[¿¡"“]+|["”]+$/g,''),s:w.s,e:w.e,hl:i===best?1:0}))});cur=[];len=0};
+ ws.forEach((w,i)=>{const prev=cur[cur.length-1];if(prev&&(cur.length>=3||len+w.w.length>16||w.s-prev.e>.35||/[.,!?;:]$/.test(prev.w)))push();cur.push(w);len+=w.w.length+1});push();
+ caps.forEach((c,i)=>{const nx=caps[i+1];c.e=Math.min(nx?nx.s:c.e+.4,c.e+.3)});VD.caps=caps;return caps.length}
+function keepSegs(c,words){const ws=words.filter(w=>(w.s+w.e)/2>=c.in&&(w.s+w.e)/2<=c.out);if(!ws.length)return null;let fills=0;const good=ws.filter(w=>{const f=FILL.has(norm(w.w));if(f)fills++;return!f});if(!good.length)return{segs:[],fills};
+ const segs=[];let a=Math.max(c.in,good[0].s-.1),z=good[0].e;for(let i=1;i<good.length;i++){const w=good[i];if(w.s-z>.35){segs.push([a,Math.min(c.out,z+.12)]);a=Math.max(c.in,w.s-.08)}z=Math.max(z,w.e)}segs.push([a,Math.min(c.out,z+.15)]);return{segs:segs.filter(([x,y])=>y-x>.15),fills}}
+async function aiNeedsWeb(){if(window.claude){VD.last='La IA de voz funciona en la app publicada: kevincrist1236-prog.github.io/retoka (aquí dentro de Claude no puede descargar el modelo).';openPanel(cur);return true}return false}
+async function vAI(kind){const K={full:'vai',subs:'vsub',fill:'vfill'}[kind];if(!VD.clips.length)return toast('Añade un video primero');if(!VD.clips.some(c=>SRC[c.src].type==='video'))return toast('Esta función necesita un video con voz');
+ if(await aiNeedsWeb())return;if(!canUse(K))return;if(vplay)vPause();vbusy=true;openPanel(cur);const st=t=>{setStatusV(t)};
+ try{const used=[...new Set(VD.clips.map(c=>c.src))].filter(id=>SRC[id].type==='video');for(const id of used)await transcribe(SRC[id],st);
+  let fills=0,saved=0,zooms=0,sfxN=0;
+  if(kind!=='subs'){const res=[];for(const c of VD.clips){const s=SRC[c.src];if(s.type!=='video'||!s.words){res.push(c);continue}const k=keepSegs(c,s.words);if(!k){res.push(c);continue}fills+=k.fills;const before=c.out-c.in;let kept=0;
+    k.segs.forEach(([a,z],j)=>{const n=JSON.parse(JSON.stringify(c));n.id=++vuid;n.in=a;n.out=z;if(j)n.tr={type:'none',d:.45};res.push(n);kept+=z-a});saved+=Math.max(0,before-kept)}VD.clips=res}
+  if(kind==='full'){VD.sfx=VD.sfx.filter(f=>!f.auto);VD.clips.forEach((c,i)=>{if(SRC[c.src].type!=='video')return;if(!c.look)c.look=1;if(i%2){c.fx.zoom='punch';c.fx.za=1.13;zooms++}else if(c.fx.zoom==='punch')c.fx.zoom='none';c.fx.flash=i===0?1:0});VD.sfx.push({t:.02,k:'impact',v:.45,auto:1});sfxN++}
+  let caps=0;if(kind!=='fill'){VD.capSt={...VD.capSt,st:'cinetico'};caps=buildCaps();if(kind==='full'){let last=-9;VD.caps.forEach(c=>{const h=c.words.find(w=>w.hl);if(h&&h.s-last>5){VD.sfx.push({t:h.s,k:'pop',v:.35,auto:1});last=h.s;sfxN++}})}}else if(VD.caps.length)buildCaps();
+  charge(K);VD.t=0;VD.sel=0;const parts=[];if(kind!=='subs')parts.push(`quité ${fills} muletillas y pausas (${saved.toFixed(1)} s)`);if(caps)parts.push(`${caps} subtítulos`);if(zooms)parts.push(`${zooms} zooms`);if(sfxN)parts.push(`${sfxN} sonidos`);
+  VD.last='Retoka IA: '+parts.join(', ')+'.';vCommit();toast('Video editado con IA')}
+ catch(e){console.error(e);VD.last='No pude escuchar el video: '+(e&&e.message||e)+'. Revisa tu conexión: la primera vez descarga el modelo de voz.'}
+ finally{vbusy=false;vRefresh()}}
+function capFont(w,st,size){return w.hl&&st.st==='cinetico'?`700 ${Math.round(size*1.25)}px "Dancing Script"`:`800 ${size}px Montserrat`}
+function drawCaps(x,tt,W,H){const st=VD.capSt;if(!VD.caps.length||st.off)return;const c=VD.caps.find(k=>tt>=k.s&&tt<=k.e);if(!c)return;const size=st.size,e=tt-c.s,pop=e<.12?.85+.15*(e/.12):1;
+ const ws=c.words.map(w=>({...w,t:st.up&&!(w.hl&&st.st==='cinetico')?w.w.toUpperCase():w.w}));x.save();x.textBaseline='middle';x.lineJoin='round';
+ ws.forEach(w=>{x.font=capFont(w,st,size);w.wd=x.measureText(w.t).width});const sp=size*.28,max=W*.86,lines=[[]];let lw=0;
+ ws.forEach(w=>{if(lw&&lw+sp+w.wd>max){lines.push([]);lw=0}lines[lines.length-1].push(w);lw+=(lw?sp:0)+w.wd});
+ const lh=size*1.22,y0=H*st.y-(lines.length-1)*lh/2;x.translate(W/2,H*st.y);x.scale(pop,pop);x.translate(-W/2,-H*st.y);
+ lines.forEach((ln,li)=>{const tw=ln.reduce((a,w)=>a+w.wd,0)+sp*(ln.length-1);let xx=W/2-tw/2;const y=y0+li*lh;
+  if(st.st==='caja'){x.fillStyle='rgba(0,0,0,.78)';rr(x,xx-size*.3,y-lh/2,tw+size*.6,lh,size*.25);x.fill()}
+  ln.forEach(w=>{const act=tt>=w.s&&tt<=w.e+.05;x.font=capFont(w,st,size);let col='#fff';
+   if(st.st==='cinetico'&&w.hl)col='#ef3b4f';else if(st.st==='karaoke'&&act)col='#ffe14d';else if(st.st==='caja'&&act)col='#ef3b4f';
+   if(st.st!=='caja'){x.strokeStyle='rgba(0,0,0,.85)';x.lineWidth=size*.16;x.strokeText(w.t,xx,y)}x.shadowColor='rgba(0,0,0,.35)';x.shadowBlur=size*.15;x.fillStyle=col;x.fillText(w.t,xx,y);x.shadowColor='transparent';xx+=w.wd+sp})});x.restore()}
+
 /* ---------- integración con la app ---------- */
+if(location.hostname==='localhost')window.__rk={VD,SRC,buildCaps,keepSegs,vRefresh,vCommit};
 document.addEventListener('keydown',e=>{if(S.mode!=='video')return;const typing=/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);if(typing)return;const k=e.key.toLowerCase(),m=e.ctrlKey||e.metaKey;
  const go=a=>{e.preventDefault();e.stopImmediatePropagation();vAct(a)};
  if(e.code==='Space'){e.preventDefault();vplay?vPause():vPlay()}else if(m&&k==='x')go('vcut');else if(m&&k==='c')go('vcopy');else if(m&&k==='v')go('vpaste');else if(m&&k==='d')go('vdup');

@@ -40,6 +40,10 @@ button{cursor:pointer;border:0;background:none}
 svg.i{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .btn{background:var(--acc);color:#fff;font-weight:700;padding:10px 18px;border-radius:999px;min-height:42px}
 .btn:hover{filter:brightness(1.08)}
+.crd{display:flex;align-items:center;gap:4px;background:var(--s2);border-radius:999px;padding:7px 12px;font-weight:700;font-size:14px;color:var(--cream);margin-right:4px;min-height:36px}.crd svg{width:16px;height:16px;fill:#ffb020;stroke:none}.crd span{font-size:13px;color:var(--acc)}.crd span:empty{display:none}
+.probadge{background:var(--acc);color:#fff;font-size:13px;font-weight:800;padding:1px 7px;border-radius:6px;vertical-align:middle;margin-left:4px}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:12px 0}.plan{background:var(--s2);border-radius:16px;padding:16px;border:2px solid transparent}.plan.on{border-color:var(--cream)}.plan b{font-size:20px}.plan p{color:var(--mute);margin:4px 0}.plan ul{padding-left:18px;margin:8px 0 12px;font-size:14px}
+.costs{display:grid;gap:4px}.costs div{display:flex;justify-content:space-between;background:var(--s2);padding:8px 12px;border-radius:10px;font-size:14px}.costs b{color:#ffb020}
 #exp{display:flex;align-items:center;gap:6px}#exp svg{stroke:#fff}
 button,label,input{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .cmp .short{display:none}.add b{font-size:20px;font-weight:600;display:block;line-height:1}.add span{display:block}
@@ -158,7 +162,7 @@ textarea{width:100%;min-height:76px;border-radius:12px;border:1px solid var(--li
 @media (max-width:820px){
  .app{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto auto;height:100dvh}
  .top{min-height:50px;padding:env(safe-area-inset-top) 10px 0;gap:4px}.top .logo{height:19px}
- .tb{gap:2px}.ib{width:38px;height:38px}
+ .tb{gap:2px}.ib{width:38px;height:38px}.crd{padding:6px 9px;font-size:13px;margin-right:2px}
  #exp{width:42px;height:38px;min-height:38px;padding:0;justify-content:center;border-radius:12px}#exp span{display:none}
  .stage{grid-row:2;padding:54px 10px 10px}
  .bar{top:8px;left:10px;right:10px;gap:8px;flex-wrap:nowrap}
@@ -191,7 +195,7 @@ textarea{width:100%;min-height:76px;border-radius:12px;border:1px solid var(--li
  <header class="top">
   <img class="logo" src="data:image/png;base64,LOGO_B64" alt="Retoka">
   <nav class="modes" id="modes"><button data-m="foto" class="on">Foto</button><button data-m="collage">Collage</button><button data-m="carrusel">Carrusel</button><button data-m="video">Video</button></nav>
-  <div class="tb">
+  <div class="tb"><button class="crd" id="crd" aria-label="Créditos y planes"></button>
    <button class="ib" id="undo" title="Deshacer (Ctrl+Z)" aria-label="Deshacer"><svg class="i" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg></button>
    <button class="ib" id="redo" title="Rehacer (Ctrl+Shift+Z)" aria-label="Rehacer"><svg class="i" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h3"/></svg></button>
    <button class="btn" id="exp" aria-label="Exportar"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg><span>Exportar</span></button>
@@ -210,7 +214,7 @@ textarea{width:100%;min-height:76px;border-radius:12px;border:1px solid var(--li
 </div>
 <div class="modal" id="mod" hidden><div class="sheet">
  <header><h2>Tu diseño está listo</h2><button class="gb" id="close">Cerrar</button></header>
- <p class="hint">Si el botón de descarga no aparece, mantén presionada cada imagen (o clic derecho → Guardar imagen).</p>
+ <p class="hint" id="exphint">Si el botón de descarga no aparece, mantén presionada cada imagen (o clic derecho → Guardar imagen).</p>
  <div class="outs" id="outs"></div>
 </div></div>
 <div class="toast" id="toast"></div>
@@ -262,6 +266,18 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3400)};
 const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
+/* ---------- créditos (simulados en el prototipo) ---------- */
+const COST={ai:1,rmbg:2,erase:1,deblur:1,up:1,vai:20,vsub:8,vfill:5},PROK=new Set(['vai','vsub','vfill']),PLAN={gratis:{n:'Gratis',m:30},pro:{n:'Pro',m:600}};
+const CR={plan:'gratis',n:30};try{Object.assign(CR,JSON.parse(localStorage.getItem('rk-cr')||'{}'))}catch(e){}
+function saveCR(){try{localStorage.setItem('rk-cr',JSON.stringify(CR))}catch(e){}const b=document.getElementById('crd');if(b)b.innerHTML=`<svg class="i" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>${CR.n}<span>${CR.plan==='pro'?'PRO':''}</span>`}
+function canUse(k,m=1){if(PROK.has(k)&&CR.plan!=='pro'){showPlans('Esta función es del plan Pro.');return false}if(CR.n<COST[k]*m){showPlans(`Necesitas ${COST[k]*m} créditos y te quedan ${CR.n}.`);return false}return true}
+function charge(k,m=1){CR.n=Math.max(0,CR.n-COST[k]*m);saveCR();toast(`Usaste ${COST[k]*m} crédito${COST[k]*m>1?'s':''} · te quedan ${CR.n}`)}
+function showPlans(msg){const o=document.getElementById('outs');document.getElementById('exphint').hidden=true;document.querySelector('#mod h2').textContent='Planes de Retoka';
+ o.innerHTML=`<div style="grid-column:1/-1">${msg?`<p class="st" style="color:var(--ink)">${msg}</p>`:''}<p class="hint">Prototipo: los créditos y planes son simulados, todavía no hay cobros reales.</p>
+ <div class="plans"><div class="plan ${CR.plan==='gratis'?'on':''}"><b>Gratis</b><p>${PLAN.gratis.m} créditos al mes</p><ul><li>Todas las herramientas manuales de foto y video</li><li>Estilos de 1 toque</li><li>IA de fotos con créditos</li></ul><button class="gb full" data-plan="gratis">${CR.plan==='gratis'?'Tu plan actual':'Cambiar a Gratis'}</button></div>
+ <div class="plan pro ${CR.plan==='pro'?'on':''}"><b>Pro <span class="probadge">PRO</span></b><p>${PLAN.pro.m} créditos al mes · precio por definir</p><ul><li>Todo lo de Gratis</li><li>Editar video con IA</li><li>Subtítulos automáticos y quitar muletillas</li></ul><button class="wb" data-plan="pro">${CR.plan==='pro'?'Tu plan actual':'Probar Pro (demo)'}</button></div></div>
+ <h3>Cuánto cuesta cada función</h3><div class="costs">${[['Mejorar foto con IA','ai'],['Quitar fondo','rmbg'],['Borrar objetos','erase'],['Recuperar nitidez','deblur'],['Mejorar resolución','up'],['Editar video con IA (Pro)','vai'],['Subtítulos automáticos (Pro)','vsub'],['Quitar muletillas (Pro)','vfill']].map(([l,k])=>`<div><span>${l}</span><b>${COST[k]}</b></div>`).join('')}</div>
+ <button class="gb full" data-plan="refill">Recargar créditos de prueba</button></div>`;document.getElementById('mod').hidden=false}
 const icon=k=>`<svg class="i" viewBox="0 0 24 24">${IC[k]}</svg>`;
 
 /* ---------- fotos ---------- */
@@ -433,8 +449,8 @@ function nitLevel(p){const v=p.vers[p.v];return v&&v.op==='deblur'?v.level:'none
 async function applyDeblur(p,level,onP){const b=nitBase(p),bv=p.vers[b];
  if(level==='none'){if(b!==p.v)pushVer(p,bv.src,bv.under);return}
  const c=await deblurPhoto(bv.src,level,onP);pushVer(p,c,bv.under,{op:'deblur',base:b,level})}
-async function runDeblur(level){const p=photos[act];if(!p||busy)return;busy=true;scanOn(true);openPanel(cur);
- try{if(nitLevel(p)===level)return;await applyDeblur(p,level,f=>setStatus('nit','Recuperando nitidez… '+Math.round(f*100)+'%'));commit();toast(level==='none'?'Nitidez quitada':'Nitidez aplicada: '+{leve:'suave',medio:'media',fuerte:'fuerte'}[level])}
+async function runDeblur(level){const p=photos[act];if(!p||busy)return;if(level!=='none'&&nitLevel(p)!==level&&!canUse('deblur'))return;busy=true;scanOn(true);openPanel(cur);
+ try{if(nitLevel(p)===level)return;await applyDeblur(p,level,f=>setStatus('nit','Recuperando nitidez… '+Math.round(f*100)+'%'));commit();if(level!=='none')charge('deblur');toast(level==='none'?'Nitidez quitada':'Nitidez aplicada: '+{leve:'suave',medio:'media',fuerte:'fuerte'}[level])}
  catch(e){console.error(e);toast('No pude recuperar la nitidez en este navegador')}finally{busy=false;scanOn(false);refresh()}}
 let sampleFn=null;try{window.claude&&claude.use('sample').then(f=>{sampleFn=f},()=>{})}catch(e){}
 const AIK=['b','c','sh','hl','vib','sat','temp','tint','clarity','dehaze','vig','skin','glow','sky','water','green','earth'];
@@ -457,7 +473,7 @@ async function aiPhoto(p,onSt){
    loc.ai.nota=c==='not_granted'?'La IA avanzada no fue autorizada, así que usé el análisis rápido.':c==='rate_limited'?'La IA avanzada está ocupada; usé el análisis rápido.':'No pude usar la IA avanzada; usé el análisis rápido.'}}
  return loc;
 }
-async function runAI(all){if(!photos.length)return toast('Primero añade una foto');if(busy)return;busy=true;scanOn(true);openPanel(cur);
+async function runAI(all){if(!photos.length)return toast('Primero añade una foto');if(busy)return;if(!canUse('ai',all?photos.length:1))return;busy=true;scanOn(true);openPanel(cur);
  const list=all?photos.slice():[photos[act]];let last=null;
  try{for(const[n,p]of list.entries()){const pre=all?`Foto ${n+1} de ${list.length}: `:'';setStatus('ai',pre+'Analizando…');
   const r=await aiPhoto(p,t=>setStatus('ai',pre+t));
@@ -465,7 +481,7 @@ async function runAI(all){if(!photos.length)return toast('Primero añade una fot
   else if(nitLevel(p)!=='none')await applyDeblur(p,'none');
   p.lv=r.lv;p.adj={...DEF,grain:p.adj.grain,fade:p.adj.fade,...r.a};p.f={n:0,k:100};p.ai=r.ai;p.cache={};last=r;draw()}}
  finally{busy=false;scanOn(false);commit();refresh()}
- if(last)toast(last.ai.fuente==='vision'?'Retoka IA retocó tu foto':'Foto mejorada')}
+ if(last)charge('ai',all?photos.length:1);if(last)toast(last.ai.fuente==='vision'?'Retoka IA retocó tu foto':'Foto mejorada')}
 const diagHTML=a=>`<div class="diag"><span class="pill">${esc(a.escena||'foto')}</span><ul>${a.problemas.map(t=>`<li>${esc(t)}</li>`).join('')}</ul><p>${esc(a.resumen)}</p>${a.nota?`<p class="hint">${esc(a.nota)}</p>`:''}</div>`;
 function setStatus(id,t,pc){const el=document.getElementById('st-'+id);if(el)el.textContent=t;const pr=document.getElementById('pr-'+id);if(pr&&pc!=null){pr.parentElement.hidden=false;pr.style.width=pc+'%'}}
 function box(a,w,h,r){const t=new Float32Array(w*h),o=new Float32Array(w*h),k=2*r+1;
@@ -496,26 +512,26 @@ async function refineCut(src,maskBlob){
  ox.putImageData(od,0,0);return out}
 let bgLib=null;
 function loadBgLib(){if(bgLib)return bgLib;bgLib=new Promise((ok,no)=>{const s=document.createElement('script');s.src='bg.js';s.onload=()=>ok(window.RetokaBG);s.onerror=()=>{bgLib=null;no(new Error('script'))};document.head.appendChild(s)});return bgLib}
-async function removeBg(){const p=photos[act];if(!p||busy)return;if(p.under)return toast('Esta foto ya no tiene fondo');busy=true;openPanel(cur);scanOn(true);setStatus('bg','Preparando la IA…',2);
+async function removeBg(){const p=photos[act];if(!p||busy)return;if(p.under)return toast('Esta foto ya no tiene fondo');if(!canUse('rmbg'))return;busy=true;openPanel(cur);scanOn(true);setStatus('bg','Preparando la IA…',2);
  try{const lib=await loadBgLib();const blob=await new Promise(r=>p.src.toBlob(r,'image/png'));
   const out=await lib.segmentForeground(blob,{publicPath:new URL('./imgly/',location.href).href,model:bgModel,output:{format:'image/png'},
    progress:(k,a,t)=>{if(String(k).includes('fetch')&&t)setStatus('bg','Descargando la IA (solo la primera vez)… '+Math.round(a/t*100)+'%',Math.round(a/t*90));else if(String(k).includes('compute'))setStatus('bg','Detectando la silueta…',93)}});setStatus('bg','Afinando los bordes con la foto original…',97);await new Promise(r=>setTimeout(r,30));
-  const old=p.src,c=await refineCut(old,out);pushVer(p,c,old);p.bg={m:'color',c:'#ffffff'};
+  const old=p.src,c=await refineCut(old,out);pushVer(p,c,old);p.bg={m:'color',c:'#ffffff'};charge('rmbg');
   setStatus('bg','Listo. Elige el fondo nuevo abajo.',100);toast('Fondo eliminado');commit()}
  catch(err){console.error(err);setStatus('bg','No se pudo quitar el fondo en este navegador. Prueba con Chrome o Safari actualizados.',0)}
  busy=false;scanOn(false);refresh()}
-function upscale(){const p=photos[act];if(!p||busy)return;const k=Math.min(2,4096/Math.max(p.src.width,p.src.height));if(k<1.05)return toast('La foto ya tiene la resolución máxima (4096 px)');
+function upscale(){const p=photos[act];if(!p||busy)return;const k=Math.min(2,4096/Math.max(p.src.width,p.src.height));if(k<1.05)return toast('La foto ya tiene la resolución máxima (4096 px)');if(!canUse('up'))return;
  busy=true;scanOn(true);setTimeout(()=>{const w=Math.round(p.src.width*k),h=Math.round(p.src.height*k),c=mk(w,h),x=c.getContext('2d',{willReadFrequently:true});x.imageSmoothingQuality='high';x.drawImage(p.src,0,0,w,h);
   const id=x.getImageData(0,0,w,h),d=id.data,bl=new Float32Array(w*h*3);
   for(let y=0;y<h;y++)for(let X=0;X<w;X++){const i=(y*w+X);for(let ch=0;ch<3;ch++){let s=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const yy=clamp(y+dy,0,h-1),xx=clamp(X+dx,0,w-1);s+=d[(yy*w+xx)*4+ch]*(dx&&dy?1:dx||dy?2:4)}bl[i*3+ch]=s/16}}
   for(let i=0,j=0;i<d.length;i+=4,j+=3){d[i]+=(d[i]-bl[j])*.7;d[i+1]+=(d[i+1]-bl[j+1])*.7;d[i+2]+=(d[i+2]-bl[j+2])*.7}
   x.putImageData(id,0,0);const old={w:p.src.width,h:p.src.height};let un=null;if(p.under){un=mk(Math.round(p.under.width*k),Math.round(p.under.height*k));un.getContext('2d').drawImage(p.under,0,0,un.width,un.height)}
-  pushVer(p,c,un);busy=false;scanOn(false);commit();refresh();toast(`Resolución: ${old.w}×${old.h} → ${w}×${h}`)},60)}
+  pushVer(p,c,un);charge('up');busy=false;scanOn(false);commit();refresh();toast(`Resolución: ${old.w}×${old.h} → ${w}×${h}`)},60)}
 function coverT(img,W,H){const s=Math.max(W/img.width,H/img.height);return{s,ox:(W-img.width*s)/2,oy:(H-img.height*s)/2}}
 function strokeMask(strokes,T,iw,ih,grow){const m=mk(iw,ih),mx=m.getContext('2d');mx.strokeStyle=mx.fillStyle='#fff';mx.lineCap=mx.lineJoin='round';
  strokes.forEach(st=>{mx.lineWidth=st.size*grow/T.s+(grow>1?4:0);mx.beginPath();st.pts.forEach(([X,Y],i)=>{const a=(X-T.ox)/T.s,b=(Y-T.oy)/T.s;i?mx.lineTo(a,b):mx.moveTo(a,b)});
   if(st.pts.length==1)mx.lineTo((st.pts[0][0]-T.ox)/T.s+.1,(st.pts[0][1]-T.oy)/T.s);mx.stroke()});return m}
-function eraseNow(){const p=photos[act];if(!p||!brush.strokes.length)return toast('Primero pinta sobre lo que quieres borrar');busy=true;scanOn(true);openPanel(cur);setStatus('obj','Buscando texturas parecidas en tu foto para rellenar…');
+function eraseNow(){const p=photos[act];if(!p||!brush.strokes.length)return toast('Primero pinta sobre lo que quieres borrar');if(!canUse('erase'))return;busy=true;scanOn(true);openPanel(cur);setStatus('obj','Buscando texturas parecidas en tu foto para rellenar…');
  setTimeout(()=>{try{const[W,H]=docSize(),T=coverT(p.src,W,H),iw=p.src.width,ih=p.src.height,m=strokeMask(brush.strokes,T,iw,ih,1.15),md=m.getContext('2d').getImageData(0,0,iw,ih).data;
   let x0=iw,y0=ih,x1=-1,y1=-1;for(let y=0;y<ih;y++)for(let X=0;X<iw;X++)if(md[(y*iw+X)*4+3]>10){if(X<x0)x0=X;if(X>x1)x1=X;if(y<y0)y0=y;if(y>y1)y1=y}
   if(x1<0)return;
@@ -529,7 +545,7 @@ function eraseNow(){const p=photos[act];if(!p||!brush.strokes.length)return toas
   for(let i=0;i<N;i++)if(hole[i]){d[i*4]=res[i*3];d[i*4+1]=res[i*3+1];d[i*4+2]=res[i*3+2]}
   ccx.putImageData(cd,0,0);
   const t=mk(rw,rh),tx=t.getContext('2d');tx.imageSmoothingQuality='high';tx.drawImage(cc,0,0,rw,rh);tx.globalCompositeOperation='destination-in';tx.drawImage(m,x0,y0,rw,rh,0,0,rw,rh);
-  const c=mk(iw,ih),cx=c.getContext('2d');cx.drawImage(p.src,0,0);cx.drawImage(t,x0,y0);pushVer(p,c,p.under);brush.strokes=[];commit();toast('Objeto borrado')}
+  const c=mk(iw,ih),cx=c.getContext('2d');cx.drawImage(p.src,0,0);cx.drawImage(t,x0,y0);pushVer(p,c,p.under);brush.strokes=[];commit();charge('erase');toast('Objeto borrado')}
   catch(err){console.error(err);toast('No pude borrar esa zona. Prueba con un trazo más pequeño.')}
   finally{busy=false;scanOn(false);refresh()}},60)}
 function pmInpaint(img0,hole0,W0,H0){
@@ -684,18 +700,18 @@ const none=t=>`<h2>${t}</h2><p class="sub">Añade una foto en la tira de abajo p
 const P={
  ia:()=>{const p=photos[act];if(!p)return none('Retoka IA');const dis=busy?'disabled':'';
   return `<h2>Retoka IA</h2><p class="sub">Herramientas inteligentes para la foto seleccionada.</p>
-  <div class="card hero"><b>Mejorar con IA</b><p id="st-ai">${busy?'Trabajando…':'La IA mira tu foto, detecta qué le falta y la salva: nitidez, luz, colores reales, contraluz, piel y cielo. Sin filtros.'}</p><button class="wb" data-act="ai" ${dis}>${icon('ia')}Mejorar esta foto</button><button class="gb full" data-act="aiall" ${dis}>Mejorar todas (${photos.length})</button>${p.ai&&!busy?diagHTML(p.ai):''}</div>
+  <div class="card hero"><b>Mejorar con IA</b><p id="st-ai">${busy?'Trabajando…':'La IA mira tu foto, detecta qué le falta y la salva: nitidez, luz, colores reales, contraluz, piel y cielo. Sin filtros.'}</p><button class="wb" data-act="ai" ${dis}>${icon('ia')}Mejorar esta foto · ${COST.ai}</button><button class="gb full" data-act="aiall" ${dis}>Mejorar todas (${photos.length})</button>${p.ai&&!busy?diagHTML(p.ai):''}</div>
   <div class="card"><b>Quitar fondo</b><p>Recorta personas, productos o mascotas y cambia el fondo.</p>
    ${p.under?`<div class="chips">${[['color','#ffffff','Blanco'],['color','#f6efe2','Crema'],['color','#111111','Negro'],['color','#ef3b4f','Rojo'],['blur','','Desenfocado'],['none','','Transparente']].map(([m,c,l])=>`<button class="ch ${p.bg.m===m&&(m!=='color'||p.bg.c===c)?'on':''}" data-act="bgset" data-m="${m}" data-v="${c}">${l}</button>`).join('')}<input type="color" data-bgc value="${p.bg.c}" aria-label="Otro color de fondo" style="width:44px;height:40px;border:0;background:none"></div>
    <h3>Corregir recorte</h3><div class="row"><button class="gb ${brush.on&&brush.mode==='cdel'?'on':''}" data-act="cbrush" data-v="cdel">Borrar sobrante</button><button class="gb ${brush.on&&brush.mode==='cadd'?'on':''}" data-act="cbrush" data-v="cadd">Recuperar parte</button></div>
    ${brush.on&&brush.mode!=='obj'?`<div style="margin-top:12px">${slider('size','Tamaño del pincel',brush.size,6,240,'data-brush')}</div>`:''}
    <p class="hint" style="margin:8px 0 0">Pinta sobre lo que quedó del fondo para quitarlo, o sobre lo que se borró de más para recuperarlo. Se aplica al soltar.</p>`
-   :`<div class="chips" style="margin-bottom:10px"><button class="ch ${bgModel==='medium'?'on':''}" data-act="bgmodel" data-v="medium">Preciso</button><button class="ch ${bgModel==='small'?'on':''}" data-act="bgmodel" data-v="small">Rápido</button></div><button class="wb" data-act="rmbg" ${dis}>Quitar fondo</button><div class="prog" hidden><i id="pr-bg"></i></div><div class="st" id="st-bg">${bgModel==='medium'?'Recorte más exacto. La primera vez descarga la IA (unos 88 MB).':'Más ligero (unos 45 MB), menos exacto en bordes difíciles.'} Después funciona sin volver a descargar.</div>`}</div>
+   :`<div class="chips" style="margin-bottom:10px"><button class="ch ${bgModel==='medium'?'on':''}" data-act="bgmodel" data-v="medium">Preciso</button><button class="ch ${bgModel==='small'?'on':''}" data-act="bgmodel" data-v="small">Rápido</button></div><button class="wb" data-act="rmbg" ${dis}>Quitar fondo · ${COST.rmbg}</button><div class="prog" hidden><i id="pr-bg"></i></div><div class="st" id="st-bg">${bgModel==='medium'?'Recorte más exacto. La primera vez descarga la IA (unos 88 MB).':'Más ligero (unos 45 MB), menos exacto en bordes difíciles.'} Después funciona sin volver a descargar.</div>`}</div>
   <div class="card"><b>Borrar objetos</b><p>Pinta sobre personas, cables, manchas o lo que sobre, y desaparece.</p>
    <button class="gb ${brush.on&&brush.mode==='obj'?'on':''}" data-act="brush">${brush.on&&brush.mode==='obj'?'Pintando… (toca para salir)':'Pintar lo que quiero borrar'}</button>
-   ${brush.on&&brush.mode==='obj'?`<div style="margin-top:12px">${slider('size','Tamaño del pincel',brush.size,10,240,'data-brush')}</div><div class="row"><button class="wb" style="flex:1" data-act="erase" ${dis}>Borrar ahora</button><button class="gb" data-act="clearbrush">Limpiar trazo</button></div><div class="st" id="st-obj">Retoka rellena copiando texturas reales de tu foto (grama, pared, arena, cielo…).</div>`:''}</div>
+   ${brush.on&&brush.mode==='obj'?`<div style="margin-top:12px">${slider('size','Tamaño del pincel',brush.size,10,240,'data-brush')}</div><div class="row"><button class="wb" style="flex:1" data-act="erase" ${dis}>Borrar ahora · ${COST.erase}</button><button class="gb" data-act="clearbrush">Limpiar trazo</button></div><div class="st" id="st-obj">Retoka rellena copiando texturas reales de tu foto (grama, pared, arena, cielo…).</div>`:''}</div>
   <div class="card"><b>Recuperar nitidez</b><p id="st-nit">Para fotos movidas o desenfocadas. Cada nivel reemplaza al anterior, nunca se suman.</p><div class="chips">${[['none','Ninguna'],['leve','Suave'],['medio','Media'],['fuerte','Fuerte']].map(([k,l])=>`<button class="ch ${nitLevel(p)===k?'on':''}" data-act="deblur" data-v="${k}" ${dis}>${l}</button>`).join('')}</div></div>
-  <div class="card"><b>Mejorar resolución</b><p>Duplica el tamaño y afina detalles. Actual: ${p.src.width}×${p.src.height} px.</p><button class="wb" data-act="up" ${dis}>Duplicar resolución (2x)</button></div>
+  <div class="card"><b>Mejorar resolución</b><p>Duplica el tamaño y afina detalles. Actual: ${p.src.width}×${p.src.height} px.</p><button class="wb" data-act="up" ${dis}>Duplicar resolución (2x) · ${COST.up}</button></div>
   ${hi>0?`<button class="gb full" data-act="undotool">Deshacer último cambio</button>`:''}
   <button class="gb full" data-act="revert">Volver a la foto original</button><p class="hint" style="margin-top:6px">Quita todo: ajustes, IA, objetos borrados, fondo y resolución. Puedes deshacerlo.</p>`},
  retrato:()=>{const p=photos[act];if(!p)return none('Retrato');return `<h2>Retoque de piel</h2><p class="sub">Detecta la piel y la suaviza sin perder ojos, labios ni cabello.</p>
@@ -876,6 +892,8 @@ dragRz($('#rzr'),e=>{const f=$('#film').getBoundingClientRect(),k=S.mode==='vide
 dragRz($('#rzc'),e=>{const w=Math.round(clamp(innerWidth-e.clientX,300,Math.min(720,innerWidth*.6)))+'px';appEl.style.setProperty('--insw',w);LS.set('insw',w)},()=>{appEl.style.removeProperty('--insw');LS.set('insw','')});
 const grab=$('#grab');grab._tap=()=>{appEl.style.removeProperty('--panelh');LS.set('panelh','');$('#insp').classList.toggle('big')};
 dragRz(grab,e=>{const tabs=$('#tabs').getBoundingClientRect(),h=Math.round(clamp(tabs.top-e.clientY-22,90,innerHeight*.7))+'px';$('#insp').classList.remove('big');appEl.style.setProperty('--panelh',h);LS.set('panelh',h)},()=>{appEl.style.removeProperty('--panelh');LS.set('panelh','')});
+$('#crd').onclick=()=>showPlans('');saveCR();
+$('#outs').addEventListener('click',e=>{const b=e.target.closest('[data-plan]');if(!b)return;const v=b.dataset.plan;if(v==='refill'){CR.n=Math.max(CR.n,PLAN[CR.plan].m);toast('Créditos recargados')}else{CR.plan=v;CR.n=Math.max(CR.n,PLAN[v].m);toast(v==='pro'?'Plan Pro activado (demo)':'Plan Gratis')}saveCR();showPlans('');openPanel(cur)});
 $('#undo').onclick=undo;$('#redo').onclick=redo;
 addEventListener('keydown',e=>{const typing=/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!typing){e.preventDefault();e.shiftKey?redo():undo()}
@@ -889,7 +907,7 @@ $('#exp').onclick=()=>{if(S.mode==='video')return vExport();if(!photos.length)re
  let outs=[];if(S.mode==='carrusel'){const[sw,sh]=FMT[S.car.fmt];for(let i=0;i<S.car.n;i++){const s=mk(sw,sh);s.getContext('2d').drawImage(c,i*sw,0,sw,sh,0,0,sw,sh);outs.push(s.toDataURL(ty,.93))}}else outs=[c.toDataURL(ty,.93)];
  LAST=outs.map((u,i)=>({u,name:`retoka-${S.mode}-${i+1}.${ext}`}));
  $('#outs').innerHTML=LAST.map((o,i)=>`<figure><img src="${o.u}" alt="Imagen ${i+1}">${dl||window.claude?`<button class="wb dl" data-i="${i}" ${dl?'':'hidden'}>Descargar ${outs.length>1?'slide '+(i+1):'imagen'}</button>`:`<a class="wb" href="${o.u}" download="${o.name}">Descargar ${outs.length>1?'slide '+(i+1):'imagen'}</a>`}</figure>`).join('');
- $('#mod').hidden=false;draw()};
+ document.querySelector('#mod h2').textContent='Tu diseño está listo';$('#exphint').hidden=false;$('#mod').hidden=false;draw()};
 const toBytes=u=>{const b=atob(u.split(',')[1]),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a};
 $('#outs').addEventListener('click',async e=>{const b=e.target.closest('.dl');if(!b||!dl)return;const o=LAST[+b.dataset.i];
  try{await dl.save({filename:o.name,data:toBytes(o.u)});toast('Imagen guardada')}catch(err){const c=err&&err.code;if(c==='declined')return;if(c==='rate_limited')return toast('Espera un momento y vuelve a intentar');toast('No se pudo descargar aquí. Mantén presionada la imagen para guardarla.')}});

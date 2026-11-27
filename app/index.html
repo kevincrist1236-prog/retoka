@@ -40,6 +40,10 @@ button{cursor:pointer;border:0;background:none}
 svg.i{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .btn{background:var(--acc);color:#fff;font-weight:700;padding:10px 18px;border-radius:999px;min-height:42px}
 .btn:hover{filter:brightness(1.08)}
+.crd{display:flex;align-items:center;gap:4px;background:var(--s2);border-radius:999px;padding:7px 12px;font-weight:700;font-size:14px;color:var(--cream);margin-right:4px;min-height:36px}.crd svg{width:16px;height:16px;fill:#ffb020;stroke:none}.crd span{font-size:13px;color:var(--acc)}.crd span:empty{display:none}
+.probadge{background:var(--acc);color:#fff;font-size:13px;font-weight:800;padding:1px 7px;border-radius:6px;vertical-align:middle;margin-left:4px}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:12px 0}.plan{background:var(--s2);border-radius:16px;padding:16px;border:2px solid transparent}.plan.on{border-color:var(--cream)}.plan b{font-size:20px}.plan p{color:var(--mute);margin:4px 0}.plan ul{padding-left:18px;margin:8px 0 12px;font-size:14px}
+.costs{display:grid;gap:4px}.costs div{display:flex;justify-content:space-between;background:var(--s2);padding:8px 12px;border-radius:10px;font-size:14px}.costs b{color:#ffb020}
 #exp{display:flex;align-items:center;gap:6px}#exp svg{stroke:#fff}
 button,label,input{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .cmp .short{display:none}.add b{font-size:20px;font-weight:600;display:block;line-height:1}.add span{display:block}
@@ -158,7 +162,7 @@ textarea{width:100%;min-height:76px;border-radius:12px;border:1px solid var(--li
 @media (max-width:820px){
  .app{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto auto;height:100dvh}
  .top{min-height:50px;padding:env(safe-area-inset-top) 10px 0;gap:4px}.top .logo{height:19px}
- .tb{gap:2px}.ib{width:38px;height:38px}
+ .tb{gap:2px}.ib{width:38px;height:38px}.crd{padding:6px 9px;font-size:13px;margin-right:2px}
  #exp{width:42px;height:38px;min-height:38px;padding:0;justify-content:center;border-radius:12px}#exp span{display:none}
  .stage{grid-row:2;padding:54px 10px 10px}
  .bar{top:8px;left:10px;right:10px;gap:8px;flex-wrap:nowrap}
@@ -191,7 +195,7 @@ textarea{width:100%;min-height:76px;border-radius:12px;border:1px solid var(--li
  <header class="top">
   <img class="logo" src="data:image/png;base64,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" alt="Retoka">
   <nav class="modes" id="modes"><button data-m="foto" class="on">Foto</button><button data-m="collage">Collage</button><button data-m="carrusel">Carrusel</button><button data-m="video">Video</button></nav>
-  <div class="tb">
+  <div class="tb"><button class="crd" id="crd" aria-label="Créditos y planes"></button>
    <button class="ib" id="undo" title="Deshacer (Ctrl+Z)" aria-label="Deshacer"><svg class="i" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg></button>
    <button class="ib" id="redo" title="Rehacer (Ctrl+Shift+Z)" aria-label="Rehacer"><svg class="i" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h3"/></svg></button>
    <button class="btn" id="exp" aria-label="Exportar"><svg class="i" viewBox="0 0 24 24"><path d="M12 4v11m0 0-4-4m4 4 4-4M5 20h14"/></svg><span>Exportar</span></button>
@@ -210,7 +214,7 @@ textarea{width:100%;min-height:76px;border-radius:12px;border:1px solid var(--li
 </div>
 <div class="modal" id="mod" hidden><div class="sheet">
  <header><h2>Tu diseño está listo</h2><button class="gb" id="close">Cerrar</button></header>
- <p class="hint">Si el botón de descarga no aparece, mantén presionada cada imagen (o clic derecho → Guardar imagen).</p>
+ <p class="hint" id="exphint">Si el botón de descarga no aparece, mantén presionada cada imagen (o clic derecho → Guardar imagen).</p>
  <div class="outs" id="outs"></div>
 </div></div>
 <div class="toast" id="toast"></div>
@@ -262,6 +266,18 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3400)};
 const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
+/* ---------- créditos (simulados en el prototipo) ---------- */
+const COST={ai:1,rmbg:2,erase:1,deblur:1,up:1,vai:20,vsub:8,vfill:5},PROK=new Set(['vai','vsub','vfill']),PLAN={gratis:{n:'Gratis',m:30},pro:{n:'Pro',m:600}};
+const CR={plan:'gratis',n:30};try{Object.assign(CR,JSON.parse(localStorage.getItem('rk-cr')||'{}'))}catch(e){}
+function saveCR(){try{localStorage.setItem('rk-cr',JSON.stringify(CR))}catch(e){}const b=document.getElementById('crd');if(b)b.innerHTML=`<svg class="i" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>${CR.n}<span>${CR.plan==='pro'?'PRO':''}</span>`}
+function canUse(k,m=1){if(PROK.has(k)&&CR.plan!=='pro'){showPlans('Esta función es del plan Pro.');return false}if(CR.n<COST[k]*m){showPlans(`Necesitas ${COST[k]*m} créditos y te quedan ${CR.n}.`);return false}return true}
+function charge(k,m=1){CR.n=Math.max(0,CR.n-COST[k]*m);saveCR();toast(`Usaste ${COST[k]*m} crédito${COST[k]*m>1?'s':''} · te quedan ${CR.n}`)}
+function showPlans(msg){const o=document.getElementById('outs');document.getElementById('exphint').hidden=true;document.querySelector('#mod h2').textContent='Planes de Retoka';
+ o.innerHTML=`<div style="grid-column:1/-1">${msg?`<p class="st" style="color:var(--ink)">${msg}</p>`:''}<p class="hint">Prototipo: los créditos y planes son simulados, todavía no hay cobros reales.</p>
+ <div class="plans"><div class="plan ${CR.plan==='gratis'?'on':''}"><b>Gratis</b><p>${PLAN.gratis.m} créditos al mes</p><ul><li>Todas las herramientas manuales de foto y video</li><li>Estilos de 1 toque</li><li>IA de fotos con créditos</li></ul><button class="gb full" data-plan="gratis">${CR.plan==='gratis'?'Tu plan actual':'Cambiar a Gratis'}</button></div>
+ <div class="plan pro ${CR.plan==='pro'?'on':''}"><b>Pro <span class="probadge">PRO</span></b><p>${PLAN.pro.m} créditos al mes · precio por definir</p><ul><li>Todo lo de Gratis</li><li>Editar video con IA</li><li>Subtítulos automáticos y quitar muletillas</li></ul><button class="wb" data-plan="pro">${CR.plan==='pro'?'Tu plan actual':'Probar Pro (demo)'}</button></div></div>
+ <h3>Cuánto cuesta cada función</h3><div class="costs">${[['Mejorar foto con IA','ai'],['Quitar fondo','rmbg'],['Borrar objetos','erase'],['Recuperar nitidez','deblur'],['Mejorar resolución','up'],['Editar video con IA (Pro)','vai'],['Subtítulos automáticos (Pro)','vsub'],['Quitar muletillas (Pro)','vfill']].map(([l,k])=>`<div><span>${l}</span><b>${COST[k]}</b></div>`).join('')}</div>
+ <button class="gb full" data-plan="refill">Recargar créditos de prueba</button></div>`;document.getElementById('mod').hidden=false}
 const icon=k=>`<svg class="i" viewBox="0 0 24 24">${IC[k]}</svg>`;
 
 /* ---------- fotos ---------- */
@@ -433,8 +449,8 @@ function nitLevel(p){const v=p.vers[p.v];return v&&v.op==='deblur'?v.level:'none
 async function applyDeblur(p,level,onP){const b=nitBase(p),bv=p.vers[b];
  if(level==='none'){if(b!==p.v)pushVer(p,bv.src,bv.under);return}
  const c=await deblurPhoto(bv.src,level,onP);pushVer(p,c,bv.under,{op:'deblur',base:b,level})}
-async function runDeblur(level){const p=photos[act];if(!p||busy)return;busy=true;scanOn(true);openPanel(cur);
- try{if(nitLevel(p)===level)return;await applyDeblur(p,level,f=>setStatus('nit','Recuperando nitidez… '+Math.round(f*100)+'%'));commit();toast(level==='none'?'Nitidez quitada':'Nitidez aplicada: '+{leve:'suave',medio:'media',fuerte:'fuerte'}[level])}
+async function runDeblur(level){const p=photos[act];if(!p||busy)return;if(level!=='none'&&nitLevel(p)!==level&&!canUse('deblur'))return;busy=true;scanOn(true);openPanel(cur);
+ try{if(nitLevel(p)===level)return;await applyDeblur(p,level,f=>setStatus('nit','Recuperando nitidez… '+Math.round(f*100)+'%'));commit();if(level!=='none')charge('deblur');toast(level==='none'?'Nitidez quitada':'Nitidez aplicada: '+{leve:'suave',medio:'media',fuerte:'fuerte'}[level])}
  catch(e){console.error(e);toast('No pude recuperar la nitidez en este navegador')}finally{busy=false;scanOn(false);refresh()}}
 let sampleFn=null;try{window.claude&&claude.use('sample').then(f=>{sampleFn=f},()=>{})}catch(e){}
 const AIK=['b','c','sh','hl','vib','sat','temp','tint','clarity','dehaze','vig','skin','glow','sky','water','green','earth'];
@@ -457,7 +473,7 @@ async function aiPhoto(p,onSt){
    loc.ai.nota=c==='not_granted'?'La IA avanzada no fue autorizada, así que usé el análisis rápido.':c==='rate_limited'?'La IA avanzada está ocupada; usé el análisis rápido.':'No pude usar la IA avanzada; usé el análisis rápido.'}}
  return loc;
 }
-async function runAI(all){if(!photos.length)return toast('Primero añade una foto');if(busy)return;busy=true;scanOn(true);openPanel(cur);
+async function runAI(all){if(!photos.length)return toast('Primero añade una foto');if(busy)return;if(!canUse('ai',all?photos.length:1))return;busy=true;scanOn(true);openPanel(cur);
  const list=all?photos.slice():[photos[act]];let last=null;
  try{for(const[n,p]of list.entries()){const pre=all?`Foto ${n+1} de ${list.length}: `:'';setStatus('ai',pre+'Analizando…');
   const r=await aiPhoto(p,t=>setStatus('ai',pre+t));
@@ -465,7 +481,7 @@ async function runAI(all){if(!photos.length)return toast('Primero añade una fot
   else if(nitLevel(p)!=='none')await applyDeblur(p,'none');
   p.lv=r.lv;p.adj={...DEF,grain:p.adj.grain,fade:p.adj.fade,...r.a};p.f={n:0,k:100};p.ai=r.ai;p.cache={};last=r;draw()}}
  finally{busy=false;scanOn(false);commit();refresh()}
- if(last)toast(last.ai.fuente==='vision'?'Retoka IA retocó tu foto':'Foto mejorada')}
+ if(last)charge('ai',all?photos.length:1);if(last)toast(last.ai.fuente==='vision'?'Retoka IA retocó tu foto':'Foto mejorada')}
 const diagHTML=a=>`<div class="diag"><span class="pill">${esc(a.escena||'foto')}</span><ul>${a.problemas.map(t=>`<li>${esc(t)}</li>`).join('')}</ul><p>${esc(a.resumen)}</p>${a.nota?`<p class="hint">${esc(a.nota)}</p>`:''}</div>`;
 function setStatus(id,t,pc){const el=document.getElementById('st-'+id);if(el)el.textContent=t;const pr=document.getElementById('pr-'+id);if(pr&&pc!=null){pr.parentElement.hidden=false;pr.style.width=pc+'%'}}
 function box(a,w,h,r){const t=new Float32Array(w*h),o=new Float32Array(w*h),k=2*r+1;
@@ -496,26 +512,26 @@ async function refineCut(src,maskBlob){
  ox.putImageData(od,0,0);return out}
 let bgLib=null;
 function loadBgLib(){if(bgLib)return bgLib;bgLib=new Promise((ok,no)=>{const s=document.createElement('script');s.src='bg.js';s.onload=()=>ok(window.RetokaBG);s.onerror=()=>{bgLib=null;no(new Error('script'))};document.head.appendChild(s)});return bgLib}
-async function removeBg(){const p=photos[act];if(!p||busy)return;if(p.under)return toast('Esta foto ya no tiene fondo');busy=true;openPanel(cur);scanOn(true);setStatus('bg','Preparando la IA…',2);
+async function removeBg(){const p=photos[act];if(!p||busy)return;if(p.under)return toast('Esta foto ya no tiene fondo');if(!canUse('rmbg'))return;busy=true;openPanel(cur);scanOn(true);setStatus('bg','Preparando la IA…',2);
  try{const lib=await loadBgLib();const blob=await new Promise(r=>p.src.toBlob(r,'image/png'));
   const out=await lib.segmentForeground(blob,{publicPath:new URL('./imgly/',location.href).href,model:bgModel,output:{format:'image/png'},
    progress:(k,a,t)=>{if(String(k).includes('fetch')&&t)setStatus('bg','Descargando la IA (solo la primera vez)… '+Math.round(a/t*100)+'%',Math.round(a/t*90));else if(String(k).includes('compute'))setStatus('bg','Detectando la silueta…',93)}});setStatus('bg','Afinando los bordes con la foto original…',97);await new Promise(r=>setTimeout(r,30));
-  const old=p.src,c=await refineCut(old,out);pushVer(p,c,old);p.bg={m:'color',c:'#ffffff'};
+  const old=p.src,c=await refineCut(old,out);pushVer(p,c,old);p.bg={m:'color',c:'#ffffff'};charge('rmbg');
   setStatus('bg','Listo. Elige el fondo nuevo abajo.',100);toast('Fondo eliminado');commit()}
  catch(err){console.error(err);setStatus('bg','No se pudo quitar el fondo en este navegador. Prueba con Chrome o Safari actualizados.',0)}
  busy=false;scanOn(false);refresh()}
-function upscale(){const p=photos[act];if(!p||busy)return;const k=Math.min(2,4096/Math.max(p.src.width,p.src.height));if(k<1.05)return toast('La foto ya tiene la resolución máxima (4096 px)');
+function upscale(){const p=photos[act];if(!p||busy)return;const k=Math.min(2,4096/Math.max(p.src.width,p.src.height));if(k<1.05)return toast('La foto ya tiene la resolución máxima (4096 px)');if(!canUse('up'))return;
  busy=true;scanOn(true);setTimeout(()=>{const w=Math.round(p.src.width*k),h=Math.round(p.src.height*k),c=mk(w,h),x=c.getContext('2d',{willReadFrequently:true});x.imageSmoothingQuality='high';x.drawImage(p.src,0,0,w,h);
   const id=x.getImageData(0,0,w,h),d=id.data,bl=new Float32Array(w*h*3);
   for(let y=0;y<h;y++)for(let X=0;X<w;X++){const i=(y*w+X);for(let ch=0;ch<3;ch++){let s=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const yy=clamp(y+dy,0,h-1),xx=clamp(X+dx,0,w-1);s+=d[(yy*w+xx)*4+ch]*(dx&&dy?1:dx||dy?2:4)}bl[i*3+ch]=s/16}}
   for(let i=0,j=0;i<d.length;i+=4,j+=3){d[i]+=(d[i]-bl[j])*.7;d[i+1]+=(d[i+1]-bl[j+1])*.7;d[i+2]+=(d[i+2]-bl[j+2])*.7}
   x.putImageData(id,0,0);const old={w:p.src.width,h:p.src.height};let un=null;if(p.under){un=mk(Math.round(p.under.width*k),Math.round(p.under.height*k));un.getContext('2d').drawImage(p.under,0,0,un.width,un.height)}
-  pushVer(p,c,un);busy=false;scanOn(false);commit();refresh();toast(`Resolución: ${old.w}×${old.h} → ${w}×${h}`)},60)}
+  pushVer(p,c,un);charge('up');busy=false;scanOn(false);commit();refresh();toast(`Resolución: ${old.w}×${old.h} → ${w}×${h}`)},60)}
 function coverT(img,W,H){const s=Math.max(W/img.width,H/img.height);return{s,ox:(W-img.width*s)/2,oy:(H-img.height*s)/2}}
 function strokeMask(strokes,T,iw,ih,grow){const m=mk(iw,ih),mx=m.getContext('2d');mx.strokeStyle=mx.fillStyle='#fff';mx.lineCap=mx.lineJoin='round';
  strokes.forEach(st=>{mx.lineWidth=st.size*grow/T.s+(grow>1?4:0);mx.beginPath();st.pts.forEach(([X,Y],i)=>{const a=(X-T.ox)/T.s,b=(Y-T.oy)/T.s;i?mx.lineTo(a,b):mx.moveTo(a,b)});
   if(st.pts.length==1)mx.lineTo((st.pts[0][0]-T.ox)/T.s+.1,(st.pts[0][1]-T.oy)/T.s);mx.stroke()});return m}
-function eraseNow(){const p=photos[act];if(!p||!brush.strokes.length)return toast('Primero pinta sobre lo que quieres borrar');busy=true;scanOn(true);openPanel(cur);setStatus('obj','Buscando texturas parecidas en tu foto para rellenar…');
+function eraseNow(){const p=photos[act];if(!p||!brush.strokes.length)return toast('Primero pinta sobre lo que quieres borrar');if(!canUse('erase'))return;busy=true;scanOn(true);openPanel(cur);setStatus('obj','Buscando texturas parecidas en tu foto para rellenar…');
  setTimeout(()=>{try{const[W,H]=docSize(),T=coverT(p.src,W,H),iw=p.src.width,ih=p.src.height,m=strokeMask(brush.strokes,T,iw,ih,1.15),md=m.getContext('2d').getImageData(0,0,iw,ih).data;
   let x0=iw,y0=ih,x1=-1,y1=-1;for(let y=0;y<ih;y++)for(let X=0;X<iw;X++)if(md[(y*iw+X)*4+3]>10){if(X<x0)x0=X;if(X>x1)x1=X;if(y<y0)y0=y;if(y>y1)y1=y}
   if(x1<0)return;
@@ -529,7 +545,7 @@ function eraseNow(){const p=photos[act];if(!p||!brush.strokes.length)return toas
   for(let i=0;i<N;i++)if(hole[i]){d[i*4]=res[i*3];d[i*4+1]=res[i*3+1];d[i*4+2]=res[i*3+2]}
   ccx.putImageData(cd,0,0);
   const t=mk(rw,rh),tx=t.getContext('2d');tx.imageSmoothingQuality='high';tx.drawImage(cc,0,0,rw,rh);tx.globalCompositeOperation='destination-in';tx.drawImage(m,x0,y0,rw,rh,0,0,rw,rh);
-  const c=mk(iw,ih),cx=c.getContext('2d');cx.drawImage(p.src,0,0);cx.drawImage(t,x0,y0);pushVer(p,c,p.under);brush.strokes=[];commit();toast('Objeto borrado')}
+  const c=mk(iw,ih),cx=c.getContext('2d');cx.drawImage(p.src,0,0);cx.drawImage(t,x0,y0);pushVer(p,c,p.under);brush.strokes=[];commit();charge('erase');toast('Objeto borrado')}
   catch(err){console.error(err);toast('No pude borrar esa zona. Prueba con un trazo más pequeño.')}
   finally{busy=false;scanOn(false);refresh()}},60)}
 function pmInpaint(img0,hole0,W0,H0){
@@ -684,18 +700,18 @@ const none=t=>`<h2>${t}</h2><p class="sub">Añade una foto en la tira de abajo p
 const P={
  ia:()=>{const p=photos[act];if(!p)return none('Retoka IA');const dis=busy?'disabled':'';
   return `<h2>Retoka IA</h2><p class="sub">Herramientas inteligentes para la foto seleccionada.</p>
-  <div class="card hero"><b>Mejorar con IA</b><p id="st-ai">${busy?'Trabajando…':'La IA mira tu foto, detecta qué le falta y la salva: nitidez, luz, colores reales, contraluz, piel y cielo. Sin filtros.'}</p><button class="wb" data-act="ai" ${dis}>${icon('ia')}Mejorar esta foto</button><button class="gb full" data-act="aiall" ${dis}>Mejorar todas (${photos.length})</button>${p.ai&&!busy?diagHTML(p.ai):''}</div>
+  <div class="card hero"><b>Mejorar con IA</b><p id="st-ai">${busy?'Trabajando…':'La IA mira tu foto, detecta qué le falta y la salva: nitidez, luz, colores reales, contraluz, piel y cielo. Sin filtros.'}</p><button class="wb" data-act="ai" ${dis}>${icon('ia')}Mejorar esta foto · ${COST.ai}</button><button class="gb full" data-act="aiall" ${dis}>Mejorar todas (${photos.length})</button>${p.ai&&!busy?diagHTML(p.ai):''}</div>
   <div class="card"><b>Quitar fondo</b><p>Recorta personas, productos o mascotas y cambia el fondo.</p>
    ${p.under?`<div class="chips">${[['color','#ffffff','Blanco'],['color','#f6efe2','Crema'],['color','#111111','Negro'],['color','#ef3b4f','Rojo'],['blur','','Desenfocado'],['none','','Transparente']].map(([m,c,l])=>`<button class="ch ${p.bg.m===m&&(m!=='color'||p.bg.c===c)?'on':''}" data-act="bgset" data-m="${m}" data-v="${c}">${l}</button>`).join('')}<input type="color" data-bgc value="${p.bg.c}" aria-label="Otro color de fondo" style="width:44px;height:40px;border:0;background:none"></div>
    <h3>Corregir recorte</h3><div class="row"><button class="gb ${brush.on&&brush.mode==='cdel'?'on':''}" data-act="cbrush" data-v="cdel">Borrar sobrante</button><button class="gb ${brush.on&&brush.mode==='cadd'?'on':''}" data-act="cbrush" data-v="cadd">Recuperar parte</button></div>
    ${brush.on&&brush.mode!=='obj'?`<div style="margin-top:12px">${slider('size','Tamaño del pincel',brush.size,6,240,'data-brush')}</div>`:''}
    <p class="hint" style="margin:8px 0 0">Pinta sobre lo que quedó del fondo para quitarlo, o sobre lo que se borró de más para recuperarlo. Se aplica al soltar.</p>`
-   :`<div class="chips" style="margin-bottom:10px"><button class="ch ${bgModel==='medium'?'on':''}" data-act="bgmodel" data-v="medium">Preciso</button><button class="ch ${bgModel==='small'?'on':''}" data-act="bgmodel" data-v="small">Rápido</button></div><button class="wb" data-act="rmbg" ${dis}>Quitar fondo</button><div class="prog" hidden><i id="pr-bg"></i></div><div class="st" id="st-bg">${bgModel==='medium'?'Recorte más exacto. La primera vez descarga la IA (unos 88 MB).':'Más ligero (unos 45 MB), menos exacto en bordes difíciles.'} Después funciona sin volver a descargar.</div>`}</div>
+   :`<div class="chips" style="margin-bottom:10px"><button class="ch ${bgModel==='medium'?'on':''}" data-act="bgmodel" data-v="medium">Preciso</button><button class="ch ${bgModel==='small'?'on':''}" data-act="bgmodel" data-v="small">Rápido</button></div><button class="wb" data-act="rmbg" ${dis}>Quitar fondo · ${COST.rmbg}</button><div class="prog" hidden><i id="pr-bg"></i></div><div class="st" id="st-bg">${bgModel==='medium'?'Recorte más exacto. La primera vez descarga la IA (unos 88 MB).':'Más ligero (unos 45 MB), menos exacto en bordes difíciles.'} Después funciona sin volver a descargar.</div>`}</div>
   <div class="card"><b>Borrar objetos</b><p>Pinta sobre personas, cables, manchas o lo que sobre, y desaparece.</p>
    <button class="gb ${brush.on&&brush.mode==='obj'?'on':''}" data-act="brush">${brush.on&&brush.mode==='obj'?'Pintando… (toca para salir)':'Pintar lo que quiero borrar'}</button>
-   ${brush.on&&brush.mode==='obj'?`<div style="margin-top:12px">${slider('size','Tamaño del pincel',brush.size,10,240,'data-brush')}</div><div class="row"><button class="wb" style="flex:1" data-act="erase" ${dis}>Borrar ahora</button><button class="gb" data-act="clearbrush">Limpiar trazo</button></div><div class="st" id="st-obj">Retoka rellena copiando texturas reales de tu foto (grama, pared, arena, cielo…).</div>`:''}</div>
+   ${brush.on&&brush.mode==='obj'?`<div style="margin-top:12px">${slider('size','Tamaño del pincel',brush.size,10,240,'data-brush')}</div><div class="row"><button class="wb" style="flex:1" data-act="erase" ${dis}>Borrar ahora · ${COST.erase}</button><button class="gb" data-act="clearbrush">Limpiar trazo</button></div><div class="st" id="st-obj">Retoka rellena copiando texturas reales de tu foto (grama, pared, arena, cielo…).</div>`:''}</div>
   <div class="card"><b>Recuperar nitidez</b><p id="st-nit">Para fotos movidas o desenfocadas. Cada nivel reemplaza al anterior, nunca se suman.</p><div class="chips">${[['none','Ninguna'],['leve','Suave'],['medio','Media'],['fuerte','Fuerte']].map(([k,l])=>`<button class="ch ${nitLevel(p)===k?'on':''}" data-act="deblur" data-v="${k}" ${dis}>${l}</button>`).join('')}</div></div>
-  <div class="card"><b>Mejorar resolución</b><p>Duplica el tamaño y afina detalles. Actual: ${p.src.width}×${p.src.height} px.</p><button class="wb" data-act="up" ${dis}>Duplicar resolución (2x)</button></div>
+  <div class="card"><b>Mejorar resolución</b><p>Duplica el tamaño y afina detalles. Actual: ${p.src.width}×${p.src.height} px.</p><button class="wb" data-act="up" ${dis}>Duplicar resolución (2x) · ${COST.up}</button></div>
   ${hi>0?`<button class="gb full" data-act="undotool">Deshacer último cambio</button>`:''}
   <button class="gb full" data-act="revert">Volver a la foto original</button><p class="hint" style="margin-top:6px">Quita todo: ajustes, IA, objetos borrados, fondo y resolución. Puedes deshacerlo.</p>`},
  retrato:()=>{const p=photos[act];if(!p)return none('Retrato');return `<h2>Retoque de piel</h2><p class="sub">Detecta la piel y la suaviza sin perder ojos, labios ni cabello.</p>
@@ -876,6 +892,8 @@ dragRz($('#rzr'),e=>{const f=$('#film').getBoundingClientRect(),k=S.mode==='vide
 dragRz($('#rzc'),e=>{const w=Math.round(clamp(innerWidth-e.clientX,300,Math.min(720,innerWidth*.6)))+'px';appEl.style.setProperty('--insw',w);LS.set('insw',w)},()=>{appEl.style.removeProperty('--insw');LS.set('insw','')});
 const grab=$('#grab');grab._tap=()=>{appEl.style.removeProperty('--panelh');LS.set('panelh','');$('#insp').classList.toggle('big')};
 dragRz(grab,e=>{const tabs=$('#tabs').getBoundingClientRect(),h=Math.round(clamp(tabs.top-e.clientY-22,90,innerHeight*.7))+'px';$('#insp').classList.remove('big');appEl.style.setProperty('--panelh',h);LS.set('panelh',h)},()=>{appEl.style.removeProperty('--panelh');LS.set('panelh','')});
+$('#crd').onclick=()=>showPlans('');saveCR();
+$('#outs').addEventListener('click',e=>{const b=e.target.closest('[data-plan]');if(!b)return;const v=b.dataset.plan;if(v==='refill'){CR.n=Math.max(CR.n,PLAN[CR.plan].m);toast('Créditos recargados')}else{CR.plan=v;CR.n=Math.max(CR.n,PLAN[v].m);toast(v==='pro'?'Plan Pro activado (demo)':'Plan Gratis')}saveCR();showPlans('');openPanel(cur)});
 $('#undo').onclick=undo;$('#redo').onclick=redo;
 addEventListener('keydown',e=>{const typing=/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!typing){e.preventDefault();e.shiftKey?redo():undo()}
@@ -889,7 +907,7 @@ $('#exp').onclick=()=>{if(S.mode==='video')return vExport();if(!photos.length)re
  let outs=[];if(S.mode==='carrusel'){const[sw,sh]=FMT[S.car.fmt];for(let i=0;i<S.car.n;i++){const s=mk(sw,sh);s.getContext('2d').drawImage(c,i*sw,0,sw,sh,0,0,sw,sh);outs.push(s.toDataURL(ty,.93))}}else outs=[c.toDataURL(ty,.93)];
  LAST=outs.map((u,i)=>({u,name:`retoka-${S.mode}-${i+1}.${ext}`}));
  $('#outs').innerHTML=LAST.map((o,i)=>`<figure><img src="${o.u}" alt="Imagen ${i+1}">${dl||window.claude?`<button class="wb dl" data-i="${i}" ${dl?'':'hidden'}>Descargar ${outs.length>1?'slide '+(i+1):'imagen'}</button>`:`<a class="wb" href="${o.u}" download="${o.name}">Descargar ${outs.length>1?'slide '+(i+1):'imagen'}</a>`}</figure>`).join('');
- $('#mod').hidden=false;draw()};
+ document.querySelector('#mod h2').textContent='Tu diseño está listo';$('#exphint').hidden=false;$('#mod').hidden=false;draw()};
 const toBytes=u=>{const b=atob(u.split(',')[1]),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a};
 $('#outs').addEventListener('click',async e=>{const b=e.target.closest('.dl');if(!b||!dl)return;const o=LAST[+b.dataset.i];
  try{await dl.save({filename:o.name,data:toBytes(o.u)});toast('Imagen guardada')}catch(err){const c=err&&err.code;if(c==='declined')return;if(c==='rate_limited')return toast('Espera un momento y vuelve a intentar');toast('No se pudo descargar aquí. Mantén presionada la imagen para guardarla.')}});
@@ -915,7 +933,7 @@ const VSFX=[['whoosh','Whoosh'],['riser','Subida'],['pop','Pop'],['click','Clic'
 const VTR=[['none','Ninguna'],['fade','Fundido'],['black','A negro'],['slide','Deslizar'],['zoom','Zoom']];
 const VANIM=[['none','Ninguna'],['fade','Aparecer'],['pop','Pop'],['up','Subir'],['type','Máquina de escribir']];
 let VCLIP=null,vzf=1,vtrim=null;
-let VD={fmt:'9:16',clips:[],texts:[],sfx:[],music:null,letterbox:0,t:0,sel:0,tsel:-1,vol:1},SRC={},vuid=0,vplay=false,vcur=-1,vprevT=0,vlastPerf=0,vsnap=null,vsnapFor=-1,vLastI=-1,MUS=null,actx=null,SFXB={},VHS_=[],vhi=-1,vbusy=false,vpps=60;
+let VD={fmt:'9:16',clips:[],texts:[],sfx:[],caps:[],capSt:{st:'cinetico',size:78,y:.7,up:1},music:null,letterbox:0,t:0,sel:0,tsel:-1,vol:1},SRC={},vuid=0,vplay=false,vcur=-1,vprevT=0,vlastPerf=0,vsnap=null,vsnapFor=-1,vLastI=-1,MUS=null,actx=null,SFXB={},VHS_=[],vhi=-1,vbusy=false,vpps=60;
 
 /* ---------- fuentes y clips ---------- */
 const vLay=()=>{let s=0;return VD.clips.map(c=>{const d=Math.max(.05,(c.out-c.in)/c.speed),o={c,start:s,dur:d};s+=d;return o})};
@@ -985,6 +1003,7 @@ function vrender(x,sc,exp,tt){const[W,H]=docSize();x.setTransform(sc,0,0,sc,0,0)
  else x.drawImage(out,0,0,W,H);
  if(a.c.fx.flash&&a.e<.3){x.fillStyle=`rgba(255,255,255,${(1-a.e/.3)*.85})`;x.fillRect(0,0,W,H)}
  if(VD.letterbox){const b=Math.max(0,(H-W/2.35)/2)*(W>H?1:.42);x.fillStyle='#000';x.fillRect(0,0,W,b);x.fillRect(0,H-b,W,b)}
+ drawCaps(x,tt,W,H);
  VD.texts.forEach(t=>vTextDraw(x,t,tt));
  if(!exp&&!vplay){const t=VD.texts[VD.tsel];if(t&&t._bb&&tt>=t.start&&tt<=t.end){x.setLineDash([10/V,6/V]);x.strokeStyle='#ef3b4f';x.lineWidth=2.5/V;x.strokeRect(...t._bb);x.setLineDash([])}}}
 
@@ -1070,9 +1089,9 @@ async function applyPreset(k){if(!VD.clips.length)return toast('Añade un video 
 function setStatusV(t){const e=$('#vst');if(e)e.textContent=t}
 
 /* ---------- historial ---------- */
-const vSnap=()=>JSON.stringify({c:VD.clips,t:VD.texts.map(({_bb,...x})=>x),s:VD.sfx,m:VD.music,l:VD.letterbox,f:VD.fmt,v:VD.vol});
+const vSnap=()=>JSON.stringify({c:VD.clips,t:VD.texts.map(({_bb,...x})=>x),s:VD.sfx,m:VD.music,l:VD.letterbox,f:VD.fmt,v:VD.vol,k:VD.caps,ks:VD.capSt});
 function vCommit(){const s=vSnap();if(VHS_[vhi]===s)return;VHS_=VHS_.slice(0,vhi+1);VHS_.push(s);if(VHS_.length>60)VHS_.shift();vhi=VHS_.length-1}
-function vRestore(s){const o=JSON.parse(s);VD.clips=o.c;VD.texts=o.t;VD.sfx=o.s;VD.music=o.m;VD.letterbox=o.l;VD.fmt=o.f;VD.vol=o.v;VD.sel=clamp(VD.sel,0,Math.max(0,VD.clips.length-1));VD.tsel=-1;VD.t=Math.min(VD.t,vTotal());vRefresh()}
+function vRestore(s){const o=JSON.parse(s);VD.clips=o.c;VD.texts=o.t;VD.sfx=o.s;VD.music=o.m;VD.letterbox=o.l;VD.fmt=o.f;VD.vol=o.v;VD.caps=o.k||[];VD.capSt=o.ks||VD.capSt;VD.sel=clamp(VD.sel,0,Math.max(0,VD.clips.length-1));VD.tsel=-1;VD.t=Math.min(VD.t,vTotal());vRefresh()}
 const vUndo=()=>{if(vhi>0){vRestore(VHS_[--vhi]);toast('Cambio deshecho')}else toast('No hay más cambios que deshacer')},vRedo=()=>{if(vhi<VHS_.length-1){vRestore(VHS_[++vhi]);toast('Cambio rehecho')}};
 
 /* ---------- paneles ---------- */
@@ -1080,11 +1099,14 @@ const vClip=()=>VD.clips[VD.sel];
 const vsl=(k,l,v,mn,mx,st,attr,fmt)=>`<label class="sl"><span>${l}<output>${fmt?fmt(v):Math.round(v*100)}</output></span><input type="range" min="${mn}" max="${mx}" step="${st}" value="${v}" ${attr}="${k}"></label>`;
 const vnone=t=>`<h2>${t}</h2><p class="sub">Añade un video o fotos en la línea de tiempo de abajo.</p>`;
 const VP={
- vauto:()=>`<h2>Edición en 1 toque</h2><p class="sub">Elige un estilo y Retoka edita tu video por ti: cortes, ritmo, color y sonido. Luego puedes ajustar lo que quieras.</p>
+ vauto:()=>`<h2>Edición en 1 toque</h2><p class="sub">Retoka edita tu video por ti. Luego puedes ajustar lo que quieras.</p>
   <div id="vst" class="st">${vbusy?'Retoka está editando tu video…':esc(VD.last||'')}</div>
+  <div class="card hero"><b>Editar con IA <span class="probadge">PRO</span></b><p>La IA escucha tu video, quita muletillas y pausas, pone subtítulos con palabras clave, zooms y sonidos. Tú solo publicas.</p><button class="wb" data-act="vai" data-v="full" ${vbusy?'disabled':''}>${icon('ia')}Editar con IA · ${COST.vai} créditos</button>
+   <div class="row" style="margin-top:8px"><button class="gb" style="flex:1" data-act="vai" data-v="subs" ${vbusy?'disabled':''}>Solo subtítulos · ${COST.vsub}</button><button class="gb" style="flex:1" data-act="vai" data-v="fill" ${vbusy?'disabled':''}>Quitar muletillas · ${COST.vfill}</button></div></div>
+  <h3>Estilos rápidos (gratis)</h3>
   ${VPRE.map(p=>`<div class="card"><b>${p.n}</b><p>${p.d}</p><button class="wb" data-act="vpre" data-v="${p.k}" ${vbusy?'disabled':''}>Aplicar</button></div>`).join('')}
   <div class="card"><b>Quitar silencios</b><p>Corta las pausas largas de tus videos hablando a cámara.</p><button class="gb full" data-act="vsil" ${vbusy?'disabled':''}>Quitar silencios</button></div>
-  <h3>Próximamente en Retoka Pro</h3><div class="soon"><div>Subtítulos automáticos<i>Pro · pronto</i></div><div>Quitar muletillas<i>Pro · pronto</i></div></div>`,
+`,
  vedit:()=>{const c=vClip();if(!c)return vnone('Editar');const s=SRC[c.src],img=s.type==='img';
   return `<h2>Editar clip ${VD.sel+1}</h2><p class="sub">${esc(s.name||'')} · ${fmtT((c.out-c.in)/c.speed)}</p>
   <div class="row"><button class="gb" data-act="vsplit">Dividir en el cursor</button><button class="gb" data-act="vdup">Duplicar</button><button class="gb" data-act="vmove" data-v="-1">← Mover</button><button class="gb" data-act="vmove" data-v="1">Mover →</button><button class="gb" data-act="vdel" style="color:var(--acc)">Eliminar</button></div>
@@ -1102,7 +1124,8 @@ const VP={
   <h3>Efectos</h3><div class="chips">${[['shake','Sacudida'],['flash','Destello'],['vhs','Retro VHS'],['bw','Blanco y negro']].map(([k,l])=>`<button class="ch ${c.fx[k]?'on':''}" data-act="vfxt" data-v="${k}">${l}</button>`).join('')}</div>
   <h3>Todo el video</h3><div class="chips"><button class="ch ${VD.letterbox?'on':''}" data-act="vlbox">Franjas de cine</button></div>
   <button class="gb full" data-act="vfxall">Aplicar estos efectos a todos los clips</button>`},
- vtext:()=>{const t=VD.texts[VD.tsel];let h=`<h2>Texto</h2><p class="sub">Toca un estilo para añadirlo en el cursor. Arrástralo sobre el video.</p><div class="tpre">${TP.map((s,i)=>`<button data-act="vtp" data-v="${i}" style="font-family:'${s.font}';font-weight:${s.w};${s.it?'font-style:italic;':''}font-size:${clamp(s.size/4,15,26)}px">${s.l}</button>`).join('')}</div>`;
+ vtext:()=>{const t=VD.texts[VD.tsel],cs=VD.capSt;let h=(VD.caps.length?`<div class="card"><b>Subtítulos (${VD.caps.length})</b><p>Estilo, tamaño y posición.</p><div class="chips">${[['cinetico','Cinético'],['karaoke','Karaoke'],['caja','Caja']].map(([k,l])=>`<button class="ch ${cs.st===k?'on':''}" data-act="vcap" data-v="${k}">${l}</button>`).join('')}<button class="ch ${cs.up?'on':''}" data-act="vcapup">MAYÚSCULAS</button><button class="ch ${cs.off?'on':''}" data-act="vcapoff">Ocultar</button></div>
+   ${vsl('size','Tamaño',cs.size,40,140,1,'data-vcs',v=>Math.round(v))}${vsl('y','Posición',cs.y,.15,.9,.01,'data-vcs',v=>Math.round(v*100)+'%')}<div class="row"><button class="gb" data-act="vcapre">Recolocar tras editar</button><button class="gb" data-act="vcapdel" style="color:var(--acc)">Quitar subtítulos</button></div></div>`:'')+`<h2>Texto</h2><p class="sub">Toca un estilo para añadirlo en el cursor. Arrástralo sobre el video.</p><div class="tpre">${TP.map((s,i)=>`<button data-act="vtp" data-v="${i}" style="font-family:'${s.font}';font-weight:${s.w};${s.it?'font-style:italic;':''}font-size:${clamp(s.size/4,15,26)}px">${s.l}</button>`).join('')}</div>`;
   if(VD.texts.length)h+=`<h3>Textos</h3><div class="chips">${VD.texts.map((x,i)=>`<button class="ch ${i===VD.tsel?'on':''}" data-act="vtsel" data-v="${i}">${esc(x.text.split('\n')[0].slice(0,14))}</button>`).join('')}</div>`;
   if(!t)return h;return h+`<h3>Editar texto</h3><textarea data-vt="text" aria-label="Texto">${esc(t.text)}</textarea>
   <h3>Cuándo aparece</h3>${vsl('start','Aparece',t.start,0,Math.max(.1,vTotal()),.05,'data-vt',v=>fmtT(+v))}${vsl('end','Desaparece',t.end,0,Math.max(.1,vTotal()),.05,'data-vt',v=>fmtT(+v))}
@@ -1149,7 +1172,7 @@ document.addEventListener('click',e=>{if(S.mode!=='video')return;if(e.target.clo
 /* ---------- acciones ---------- */
 function vAct(a,v,el){const c=vClip(),t=VD.texts[VD.tsel];let keep=false;
  const A={
-  vpre:()=>{applyPreset(v);keep=true},vsil:async()=>{keep=true;vbusy=true;openPanel(cur);const r=await removeSilences();vbusy=false;vCommit();VD.last=r.cut?`Quité ${r.cut} silencios (${r.saved.toFixed(1)} s).`:r.noA?'No encontré audio en los videos.':'No había silencios largos.';vRefresh();toast(VD.last)},
+  vpre:()=>{applyPreset(v);keep=true},vai:()=>{vAI(v);keep=true},vcap:()=>{VD.capSt.st=v},vcapup:()=>{VD.capSt.up=VD.capSt.up?0:1},vcapoff:()=>{VD.capSt.off=VD.capSt.off?0:1},vcapre:()=>{buildCaps();toast('Subtítulos recolocados')},vcapdel:()=>{VD.caps=[]},vsil:async()=>{keep=true;vbusy=true;openPanel(cur);const r=await removeSilences();vbusy=false;vCommit();VD.last=r.cut?`Quité ${r.cut} silencios (${r.saved.toFixed(1)} s).`:r.noA?'No encontré audio en los videos.':'No había silencios largos.';vRefresh();toast(VD.last)},
   vsplit:()=>{const at=vAt(VD.t);if(!at)return;const x=at.c,loc=at.local;if(loc-x.in<.1||x.out-loc<.1)return toast('Mueve el cursor dentro del clip para dividir');const n=JSON.parse(JSON.stringify(x));n.id=++vuid;n.in=loc;x.out=loc;n.tr={type:'none',d:.45};VD.clips.splice(at.i+1,0,n);VD.sel=at.i+1;toast('Clip dividido')},
   vcopy:()=>{const tx=cur==='vtext'&&t;if(tx){const{_bb,...z}=t;VCLIP={k:'text',d:JSON.parse(JSON.stringify(z))}}else if(c)VCLIP={k:'clip',d:JSON.parse(JSON.stringify(c))};else return;keep=true;film();toast(tx?'Texto copiado':'Clip copiado')},
   vcut:()=>{const tx=cur==='vtext'&&t;if(tx){const{_bb,...z}=t;VCLIP={k:'text',d:JSON.parse(JSON.stringify(z))};VD.texts.splice(VD.tsel,1);VD.tsel=-1;toast('Texto cortado')}else if(c){VCLIP={k:'clip',d:JSON.parse(JSON.stringify(c))};VD.clips.splice(VD.sel,1);VD.sel=clamp(VD.sel,0,Math.max(0,VD.clips.length-1));VD.t=Math.min(VD.t,vTotal());toast('Clip cortado')}},
@@ -1173,6 +1196,7 @@ panel.addEventListener('input',e=>{if(S.mode!=='video')return;const el=e.target,
  else if(el.dataset.vfx&&c){c.fx[el.dataset.vfx]=v;if(o)o.textContent=Math.round((v-1)*100)+'%'}
  else if(el.dataset.vt&&t){const k=el.dataset.vt;t[k]=k==='text'?el.value:v;if(o)o.textContent=k==='size'?Math.round(v):fmtT(v);if(k==='start'||k==='end')vSeek(t[k]-(k==='end'?.05:-.01))}
  else if(el.dataset.vm&&VD.music){VD.music.vol=v;if(o)o.textContent=Math.round(v*100);vSyncMusic(false)}
+ else if(el.dataset.vcs){VD.capSt[el.dataset.vcs]=v;if(o)o.textContent=el.dataset.vcs==='y'?Math.round(v*100)+'%':Math.round(v)}
  else if(el.dataset.vg){VD.vol=v;if(o)o.textContent=Math.round(v*100)}else return;e.stopImmediatePropagation();draw()},true);
 panel.addEventListener('change',e=>{if(S.mode!=='video')return;if(e.target.id==='vmusic'){const f=e.target.files[0];if(!f)return;const el=new Audio(URL.createObjectURL(f));el.preload='auto';MUS={el,file:f,buffer:null};VD.music={name:f.name,vol:.6,fin:1,fout:1};vCommit();refresh();toast('Música añadida');e.stopImmediatePropagation();return}
  e.stopImmediatePropagation();vCommit();if(e.target.dataset.vt==='start'||e.target.dataset.vt==='end'||e.target.dataset.vc)film()},true);
@@ -1199,7 +1223,7 @@ let muxLib=null;const loadMux=()=>muxLib||(muxLib=new Promise((ok,no)=>{const s=
 async function vExport(){if(!VD.clips.length)return toast('Añade un video primero');if(vplay)vPause();const[W,H]=docSize(),tot=vTotal(),fps=30,N=Math.max(1,Math.round(tot*fps));
  if(!window.VideoEncoder)return toast('Tu navegador no puede crear MP4. Actualiza Chrome o Safari.');
  const{V0,A0}=await pickCfg(W,H);if(!V0)return toast('Tu navegador no puede codificar video en este formato.');
- $('#outs').innerHTML=`<div style="grid-column:1/-1"><p id="vxp">Preparando…</p><div class="prog"><i id="vxb"></i></div><button class="gb" id="vxc" style="margin-top:10px">Cancelar</button></div>`;$('#mod').hidden=false;
+ $('#outs').innerHTML=`<div style="grid-column:1/-1"><p id="vxp">Preparando…</p><div class="prog"><i id="vxb"></i></div><button class="gb" id="vxc" style="margin-top:10px">Cancelar</button></div>`;document.querySelector('#mod h2').textContent='Exportando video';$('#exphint').hidden=true;$('#mod').hidden=false;
  let cancel=false;$('#vxc').onclick=()=>{cancel=true};const st=(t,p)=>{$('#vxp').textContent=t;if(p!=null)$('#vxb').style.width=p+'%'};
  try{const lib=await loadMux();st('Mezclando el audio…',2);const mixed=await mixAudio(tot);
   const tgt=new lib.ArrayBufferTarget(),mux=new lib.Muxer({target:tgt,video:{codec:V0.m,width:W,height:H,frameRate:fps},audio:mixed&&A0?{codec:A0.m,numberOfChannels:2,sampleRate:48000}:undefined,fastStart:'in-memory',firstTimestampBehavior:'offset'});
@@ -1219,7 +1243,63 @@ async function vExport(){if(!VD.clips.length)return toast('Añade un video prime
   const b=$('#vxdl');if(b)b.onclick=async()=>{try{await dl.save({filename:name,data:blob});toast('Video guardado')}catch(e){if(e&&e.code!=='declined')toast('No se pudo descargar aquí')}}}
  catch(e){console.error(e);st('No se pudo exportar el video: '+(e&&e.message||e),0)}finally{vLastI=-1;draw()}}
 
+/* ---------- IA de video: voz a texto, muletillas, subtítulos ---------- */
+const STOP=new Set('de la que el en y a los se del las un por con no una su para es al lo como más pero sus le ya o este sí porque esta entre cuando muy sin sobre también me hasta hay donde quien desde todo nos durante todos uno les ni contra otros ese eso ante ellos e esto mí antes algunos qué unos yo otro otras otra él tanto esa estos mucho quienes nada muchos cual poco ella estar estas algunas algo nosotros mi mis tú te ti tu tus ellas nosotras vosotros os mío mía tuyo suyo nuestro vuestro esos esas estoy estás está estamos están ser soy eres somos son era fue tengo tiene tienen hacer hace voy vas va vamos van'.split(' '));
+const FILL=new Set(['eh','ehh','ehhh','ehm','em','emm','mm','mmm','hmm','hm','ah','ahh','uh','um','umm','eeh','eee','mmh','esteee','esteeee']);
+const norm=w=>w.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-zñ0-9]/g,'');
+const ASR_CODE=`import {pipeline,env} from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/dist/transformers.min.js';
+env.allowLocalModels=false;let P=null;const M='onnx-community/whisper-base_timestamped';
+const prog=id=>p=>{if(p.status==='progress'&&p.total)self.postMessage({id,load:p.loaded/p.total})};
+self.onmessage=async e=>{const{id,audio}=e.data;try{if(!P){try{P=await pipeline('automatic-speech-recognition',M,{dtype:'q8',device:'wasm',progress_callback:prog(id)})}catch(err){P=await pipeline('automatic-speech-recognition',M,{dtype:'fp32',device:'wasm',progress_callback:prog(id)})}}
+ const r=await P(audio,{language:'spanish',task:'transcribe',return_timestamps:'word'});
+ self.postMessage({id,words:(r.chunks||[]).map(c=>({w:String(c.text||'').trim(),s:c.timestamp[0],e:c.timestamp[1]==null?c.timestamp[0]+.25:c.timestamp[1]})).filter(x=>x.w)})}
+ catch(err){self.postMessage({id,error:String(err&&err.message||err)})}};`;
+let ASRW=null,asrN=0;const asrWait={};
+function asrWorker(){if(ASRW)return ASRW;ASRW=new Worker(URL.createObjectURL(new Blob([ASR_CODE],{type:'text/javascript'})),{type:'module'});
+ ASRW.onmessage=e=>{const d=e.data,h=asrWait[d.id];if(!h)return;if(d.load!=null)return h.onLoad&&h.onLoad(d.load);delete asrWait[d.id];d.error?h.no(new Error(d.error)):h.ok(d.words)};
+ ASRW.onerror=e=>{Object.values(asrWait).forEach(h=>h.no(new Error(e.message||'No se pudo iniciar el modelo de voz')));for(const k in asrWait)delete asrWait[k];ASRW=null};return ASRW}
+function asrRun(audio,onLoad){return new Promise((ok,no)=>{const id=++asrN;asrWait[id]={ok,no,onLoad};asrWorker().postMessage({id,audio},[audio.buffer])})}
+async function transcribe(s,st){if(s.words)return s.words;const b=await decodeAudio(s);if(!b)throw new Error('Este video no tiene audio que se pueda leer');
+ st('Preparando el audio…');const O=window.OfflineAudioContext||window.webkitOfflineAudioContext,c=new O(1,Math.ceil(b.duration*16000),16000),n=c.createBufferSource();n.buffer=b;n.connect(c.destination);n.start();const mono=(await c.startRendering()).getChannelData(0);
+ const segs=(await speechSegs(s,0,b.duration))||[[0,b.duration]],wins=[];let ws=null,we=0;
+ for(const[a,z]of segs){if(ws==null){ws=Math.max(0,a-.2);we=z}else if(z-ws<=28)we=z;else{wins.push([ws,we+.2]);ws=Math.max(0,a-.2);we=z}while(we-ws>28){wins.push([ws,ws+28]);ws+=28}}if(ws!=null)wins.push([ws,Math.min(b.duration,we+.2)]);
+ const words=[];for(let k=0;k<wins.length;k++){const[a,z]=wins[k],seg=mono.slice(Math.floor(a*16000),Math.floor(z*16000));
+  st(`Escuchando tu video… ${Math.round(k/wins.length*100)}%`);const r=await asrRun(seg,f=>st(`Descargando el modelo de voz (solo la primera vez)… ${Math.round(f*100)}%`));r.forEach(w=>words.push({w:w.w,s:a+w.s,e:a+Math.max(w.e,w.s+.05)}))}
+ s.words=words;return words}
+function mapWords(){const out=[];vLay().forEach(o=>{const s=SRC[o.c.src];if(!s||!s.words)return;s.words.forEach(w=>{const m=(w.s+w.e)/2;if(m>=o.c.in&&m<=o.c.out)out.push({w:w.w,s:o.start+Math.max(0,w.s-o.c.in)/o.c.speed,e:o.start+Math.min(o.c.out-o.c.in,w.e-o.c.in)/o.c.speed})})});return out.sort((a,b)=>a.s-b.s)}
+function buildCaps(){const ws=mapWords().filter(w=>!FILL.has(norm(w.w))),caps=[];let cur=[],len=0;
+ const push=()=>{if(!cur.length)return;let best=-1,bl=5;cur.forEach((w,i)=>{const n=norm(w.w);if(n.length>bl&&!STOP.has(n)){bl=n.length;best=i}});caps.push({s:cur[0].s,e:cur[cur.length-1].e,words:cur.map((w,i)=>({w:w.w.replace(/^[¿¡"“]+|["”]+$/g,''),s:w.s,e:w.e,hl:i===best?1:0}))});cur=[];len=0};
+ ws.forEach((w,i)=>{const prev=cur[cur.length-1];if(prev&&(cur.length>=3||len+w.w.length>16||w.s-prev.e>.35||/[.,!?;:]$/.test(prev.w)))push();cur.push(w);len+=w.w.length+1});push();
+ caps.forEach((c,i)=>{const nx=caps[i+1];c.e=Math.min(nx?nx.s:c.e+.4,c.e+.3)});VD.caps=caps;return caps.length}
+function keepSegs(c,words){const ws=words.filter(w=>(w.s+w.e)/2>=c.in&&(w.s+w.e)/2<=c.out);if(!ws.length)return null;let fills=0;const good=ws.filter(w=>{const f=FILL.has(norm(w.w));if(f)fills++;return!f});if(!good.length)return{segs:[],fills};
+ const segs=[];let a=Math.max(c.in,good[0].s-.1),z=good[0].e;for(let i=1;i<good.length;i++){const w=good[i];if(w.s-z>.35){segs.push([a,Math.min(c.out,z+.12)]);a=Math.max(c.in,w.s-.08)}z=Math.max(z,w.e)}segs.push([a,Math.min(c.out,z+.15)]);return{segs:segs.filter(([x,y])=>y-x>.15),fills}}
+async function aiNeedsWeb(){if(window.claude){VD.last='La IA de voz funciona en la app publicada: kevincrist1236-prog.github.io/retoka (aquí dentro de Claude no puede descargar el modelo).';openPanel(cur);return true}return false}
+async function vAI(kind){const K={full:'vai',subs:'vsub',fill:'vfill'}[kind];if(!VD.clips.length)return toast('Añade un video primero');if(!VD.clips.some(c=>SRC[c.src].type==='video'))return toast('Esta función necesita un video con voz');
+ if(await aiNeedsWeb())return;if(!canUse(K))return;if(vplay)vPause();vbusy=true;openPanel(cur);const st=t=>{setStatusV(t)};
+ try{const used=[...new Set(VD.clips.map(c=>c.src))].filter(id=>SRC[id].type==='video');for(const id of used)await transcribe(SRC[id],st);
+  let fills=0,saved=0,zooms=0,sfxN=0;
+  if(kind!=='subs'){const res=[];for(const c of VD.clips){const s=SRC[c.src];if(s.type!=='video'||!s.words){res.push(c);continue}const k=keepSegs(c,s.words);if(!k){res.push(c);continue}fills+=k.fills;const before=c.out-c.in;let kept=0;
+    k.segs.forEach(([a,z],j)=>{const n=JSON.parse(JSON.stringify(c));n.id=++vuid;n.in=a;n.out=z;if(j)n.tr={type:'none',d:.45};res.push(n);kept+=z-a});saved+=Math.max(0,before-kept)}VD.clips=res}
+  if(kind==='full'){VD.sfx=VD.sfx.filter(f=>!f.auto);VD.clips.forEach((c,i)=>{if(SRC[c.src].type!=='video')return;if(!c.look)c.look=1;if(i%2){c.fx.zoom='punch';c.fx.za=1.13;zooms++}else if(c.fx.zoom==='punch')c.fx.zoom='none';c.fx.flash=i===0?1:0});VD.sfx.push({t:.02,k:'impact',v:.45,auto:1});sfxN++}
+  let caps=0;if(kind!=='fill'){VD.capSt={...VD.capSt,st:'cinetico'};caps=buildCaps();if(kind==='full'){let last=-9;VD.caps.forEach(c=>{const h=c.words.find(w=>w.hl);if(h&&h.s-last>5){VD.sfx.push({t:h.s,k:'pop',v:.35,auto:1});last=h.s;sfxN++}})}}else if(VD.caps.length)buildCaps();
+  charge(K);VD.t=0;VD.sel=0;const parts=[];if(kind!=='subs')parts.push(`quité ${fills} muletillas y pausas (${saved.toFixed(1)} s)`);if(caps)parts.push(`${caps} subtítulos`);if(zooms)parts.push(`${zooms} zooms`);if(sfxN)parts.push(`${sfxN} sonidos`);
+  VD.last='Retoka IA: '+parts.join(', ')+'.';vCommit();toast('Video editado con IA')}
+ catch(e){console.error(e);VD.last='No pude escuchar el video: '+(e&&e.message||e)+'. Revisa tu conexión: la primera vez descarga el modelo de voz.'}
+ finally{vbusy=false;vRefresh()}}
+function capFont(w,st,size){return w.hl&&st.st==='cinetico'?`700 ${Math.round(size*1.25)}px "Dancing Script"`:`800 ${size}px Montserrat`}
+function drawCaps(x,tt,W,H){const st=VD.capSt;if(!VD.caps.length||st.off)return;const c=VD.caps.find(k=>tt>=k.s&&tt<=k.e);if(!c)return;const size=st.size,e=tt-c.s,pop=e<.12?.85+.15*(e/.12):1;
+ const ws=c.words.map(w=>({...w,t:st.up&&!(w.hl&&st.st==='cinetico')?w.w.toUpperCase():w.w}));x.save();x.textBaseline='middle';x.lineJoin='round';
+ ws.forEach(w=>{x.font=capFont(w,st,size);w.wd=x.measureText(w.t).width});const sp=size*.28,max=W*.86,lines=[[]];let lw=0;
+ ws.forEach(w=>{if(lw&&lw+sp+w.wd>max){lines.push([]);lw=0}lines[lines.length-1].push(w);lw+=(lw?sp:0)+w.wd});
+ const lh=size*1.22,y0=H*st.y-(lines.length-1)*lh/2;x.translate(W/2,H*st.y);x.scale(pop,pop);x.translate(-W/2,-H*st.y);
+ lines.forEach((ln,li)=>{const tw=ln.reduce((a,w)=>a+w.wd,0)+sp*(ln.length-1);let xx=W/2-tw/2;const y=y0+li*lh;
+  if(st.st==='caja'){x.fillStyle='rgba(0,0,0,.78)';rr(x,xx-size*.3,y-lh/2,tw+size*.6,lh,size*.25);x.fill()}
+  ln.forEach(w=>{const act=tt>=w.s&&tt<=w.e+.05;x.font=capFont(w,st,size);let col='#fff';
+   if(st.st==='cinetico'&&w.hl)col='#ef3b4f';else if(st.st==='karaoke'&&act)col='#ffe14d';else if(st.st==='caja'&&act)col='#ef3b4f';
+   if(st.st!=='caja'){x.strokeStyle='rgba(0,0,0,.85)';x.lineWidth=size*.16;x.strokeText(w.t,xx,y)}x.shadowColor='rgba(0,0,0,.35)';x.shadowBlur=size*.15;x.fillStyle=col;x.fillText(w.t,xx,y);x.shadowColor='transparent';xx+=w.wd+sp})});x.restore()}
+
 /* ---------- integración con la app ---------- */
+if(location.hostname==='localhost')window.__rk={VD,SRC,buildCaps,keepSegs,vRefresh,vCommit};
 document.addEventListener('keydown',e=>{if(S.mode!=='video')return;const typing=/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);if(typing)return;const k=e.key.toLowerCase(),m=e.ctrlKey||e.metaKey;
  const go=a=>{e.preventDefault();e.stopImmediatePropagation();vAct(a)};
  if(e.code==='Space'){e.preventDefault();vplay?vPause():vPlay()}else if(m&&k==='x')go('vcut');else if(m&&k==='c')go('vcopy');else if(m&&k==='v')go('vpaste');else if(m&&k==='d')go('vdup');
