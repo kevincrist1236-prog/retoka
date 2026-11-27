@@ -49,7 +49,7 @@ button,label,input{touch-action:manipulation;-webkit-tap-highlight-color:transpa
 .rzc{grid-column:2;grid-row:2/4;justify-self:start;width:12px;margin-left:-6px;cursor:col-resize}
 .rz::after{content:'';position:absolute;background:var(--acc);opacity:0;transition:opacity .15s;border-radius:9px}.rzr::after{left:45%;right:45%;top:4px;height:4px}.rzc::after{top:45%;bottom:45%;left:4px;width:4px}
 .rz:hover::after,.rz.on::after{opacity:1}.rzr::before{content:'';position:absolute;left:calc(50% - 22px);top:4px;width:44px;height:4px;border-radius:9px;background:#4a4650}
-.ib.dim{opacity:.4}#vtime{white-space:nowrap;flex:none;font-variant-numeric:tabular-nums}.trow:not(.aux){height:clamp(58px,calc(var(--tlh,206px) - 150px),170px)}.tlbar{overflow-x:auto;scrollbar-width:none}.tlbar::-webkit-scrollbar{display:none}.tlbar .ib{flex:none}.app.vid .film{display:block;padding:0;overflow:hidden}.app.vid .cmp{display:none}
+.ib.dim{opacity:.4}.hdl{position:absolute;top:0;bottom:0;width:16px;background:var(--cream);cursor:ew-resize;z-index:2;display:flex;align-items:center;justify-content:center;touch-action:none}.hdl.l{left:0;border-radius:6px 0 0 6px}.hdl.r{right:0;border-radius:0 6px 6px 0}.hdl::after{content:'';width:3px;height:40%;max-height:22px;border-radius:2px;background:#16141a}.clip.on{border-width:3px}.clip.on b{left:20px}#vtime{white-space:nowrap;flex:none;font-variant-numeric:tabular-nums}.trow:not(.aux){height:clamp(58px,calc(var(--tlh,206px) - 150px),170px)}.tlbar{overflow-x:auto;scrollbar-width:none}.tlbar::-webkit-scrollbar{display:none}.tlbar .ib{flex:none}.app.vid .film{display:block;padding:0;overflow:hidden}.app.vid .cmp{display:none}
 .tl{display:flex;flex-direction:column;height:100%}
 .tlbar{display:flex;align-items:center;gap:6px;padding:5px 10px;border-bottom:1px solid var(--line)}
 #vplay{background:var(--cream);color:#16141a;border-radius:999px}#vplay svg{fill:#16141a;stroke:none}
@@ -170,6 +170,7 @@ textarea{width:100%;min-height:76px;border-radius:12px;border:1px solid var(--li
  .cmp{right:10px;bottom:10px;padding:7px 12px;font-size:13px}.cmp .long{display:none}.cmp .short{display:inline}
  .app.vid{grid-template-rows:auto minmax(0,1fr) var(--tlh,184px) auto}
  .rzc{display:none}.rzr{grid-row:3}
+ .hdl{width:20px}
  .film{grid-row:3;padding:8px 10px;gap:8px}.film .th,.add{width:56px;height:56px}.add span{display:none}.film .x{width:22px;height:22px;line-height:22px}
  .insp{grid-column:1;grid-row:4;border:0;border-top:1px solid var(--line);flex-direction:column-reverse;max-height:none}
  .grab{display:flex;justify-content:center;align-items:center;width:100%;height:22px;background:var(--s1);flex:none}
@@ -913,7 +914,7 @@ const VDEF={exp:0,con:0,sat:0,temp:0,tint:0,vig:0,fade:0,grain:0};
 const VSFX=[['whoosh','Whoosh'],['riser','Subida'],['pop','Pop'],['click','Clic'],['impact','Impacto'],['drop','Bajo'],['ding','Ding'],['camera','Cámara'],['glitch','Glitch'],['notif','Notificación'],['typing','Teclado'],['swipe','Deslizar']];
 const VTR=[['none','Ninguna'],['fade','Fundido'],['black','A negro'],['slide','Deslizar'],['zoom','Zoom']];
 const VANIM=[['none','Ninguna'],['fade','Aparecer'],['pop','Pop'],['up','Subir'],['type','Máquina de escribir']];
-let VCLIP=null,vzf=1;
+let VCLIP=null,vzf=1,vtrim=null;
 let VD={fmt:'9:16',clips:[],texts:[],sfx:[],music:null,letterbox:0,t:0,sel:0,tsel:-1,vol:1},SRC={},vuid=0,vplay=false,vcur=-1,vprevT=0,vlastPerf=0,vsnap=null,vsnapFor=-1,vLastI=-1,MUS=null,actx=null,SFXB={},VHS_=[],vhi=-1,vbusy=false,vpps=60;
 
 /* ---------- fuentes y clips ---------- */
@@ -1120,13 +1121,13 @@ const VP={
 Object.assign(P,VP);
 
 /* ---------- línea de tiempo ---------- */
-function vfilm(){const tot=vTotal(),el=$('#film'),avail=Math.max(200,el.clientWidth-24);vpps=clamp(avail/Math.max(tot,1),24,140)*vzf;const L=vLay(),W=Math.max(avail,tot*vpps+20);
+function vfilm(){const tot=vTotal(),el=$('#film'),avail=Math.max(200,el.clientWidth-24);if(!vtrim)vpps=clamp(avail/Math.max(tot,1),24,140)*vzf;const L=vLay(),W=Math.max(avail,tot*vpps+20);
  const ticks=[];const step=tot>60?10:tot>20?5:1;for(let s=0;s<=tot;s+=step)ticks.push(`<span style="left:${s*vpps+8}px">${fmtT(s).replace(/\.\d$/,'')}</span>`);
  el.innerHTML=`<div class="tl"><div class="tlbar"><button class="ib" id="vplay" aria-label="Reproducir"></button><span id="vtime" class="hint"></span><span style="flex:1"></span>
   ${[['split','Dividir (S)','<path d="M12 3v18M8 7l-4 5 4 5M16 7l4 5-4 5"/>'],['cut','Cortar (Ctrl+X)','<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/>'],['copy','Copiar (Ctrl+C)','<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/>'],['paste','Pegar (Ctrl+V)','<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V2h6v2M9 11h6M9 15h4"/>'],['dup','Duplicar (Ctrl+D)','<rect x="3" y="7" width="12" height="12" rx="2"/><path d="M9 3h10a2 2 0 0 1 2 2v10"/>'],['del','Eliminar (Supr)','<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'],['zout','Alejar línea de tiempo','<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4M8 11h6"/>'],['zin','Acercar línea de tiempo','<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4M8 11h6M11 8v6"/>']].map(([k,l,ic])=>`<button class="ib ${k==='paste'&&!VCLIP?'dim':''}" data-vt2="${k}" title="${l}" aria-label="${l}"><svg class="i" viewBox="0 0 24 24">${ic}</svg></button>`).join('')}
   <label class="ib" title="Añadir" aria-label="Añadir videos o fotos" style="cursor:pointer"><input type="file" id="vfile" accept="video/*,image/*" multiple style="display:none"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></label></div>
   <div class="tls" id="vscroll"><div class="tlt" id="vtrack" style="width:${W}px"><div class="ruler">${ticks.join('')}</div>
-  <div class="trow">${L.map((o,i)=>`<div class="clip ${i===VD.sel?'on':''}" data-ci="${i}" style="left:${o.start*vpps+8}px;width:${Math.max(6,o.dur*vpps-2)}px;background-image:url(${SRC[o.c.src]?SRC[o.c.src].thumb:''})">${o.c.tr.type!=='none'&&i?'<i class="trm"></i>':''}<b>${o.dur.toFixed(1)}s</b></div>`).join('')}</div>
+  <div class="trow">${L.map((o,i)=>`<div class="clip ${i===VD.sel?'on':''}" data-ci="${i}" style="left:${o.start*vpps+8}px;width:${Math.max(6,o.dur*vpps-2)}px;background-image:url(${SRC[o.c.src]?SRC[o.c.src].thumb:''})">${o.c.tr.type!=='none'&&i?'<i class="trm"></i>':''}<b>${o.dur.toFixed(1)}s</b>${i===VD.sel?'<i class="hdl l" data-h="l" title="Arrastra para recortar o alargar el inicio"></i><i class="hdl r" data-h="r" title="Arrastra para recortar o alargar el final"></i>':''}</div>`).join('')}</div>
   <div class="trow aux">${VD.texts.map((t,i)=>`<div class="tchip ${i===VD.tsel?'on':''}" data-ti="${i}" style="left:${t.start*vpps+8}px;width:${Math.max(16,(t.end-t.start)*vpps)}px">T ${esc(t.text.split('\n')[0].slice(0,12))}</div>`).join('')}
    ${VD.sfx.map(f=>`<i class="sdot" style="left:${f.t*vpps+8}px" title="${f.k}"></i>`).join('')}${VD.music?`<div class="mbar" style="left:8px;width:${tot*vpps}px">♪ ${esc(VD.music.name)}</div>`:''}</div>
   <div class="ph" id="vph"></div></div></div></div>`;
@@ -1134,6 +1135,12 @@ function vfilm(){const tot=vTotal(),el=$('#film'),avail=Math.max(200,el.clientWi
 function vRefresh(){refresh()}
 function vTrackT(e){const tr=$('#vtrack'),r=tr.getBoundingClientRect();return clamp((e.clientX-r.left-8)/vpps,0,vTotal())}
 document.addEventListener('pointerdown',e=>{if(S.mode!=='video')return;const tr=e.target.closest('#vtrack');if(!tr)return;
+ const hd=e.target.closest('.hdl');if(hd){e.preventDefault();if(vplay)vPause();const i=+hd.closest('[data-ci]').dataset.ci,c=VD.clips[i],s=SRC[c.src];vtrim={i,side:hd.dataset.h,x:e.clientX,in:c.in,out:c.out};
+  const mv=ev=>{const c=VD.clips[vtrim.i],d=(ev.clientX-vtrim.x)/vpps*c.speed,img=s.type==='img';
+   if(vtrim.side==='l'){if(img)c.out=clamp(vtrim.out-d,.3,30);else c.in=clamp(vtrim.in+d,0,c.out-.1)}else c.out=img?clamp(vtrim.out+d,.3,30):clamp(vtrim.out+d,c.in+.1,s.dur);
+   const o=vLay()[vtrim.i];film();vSeek(vtrim.side==='l'?o.start:o.start+o.dur-.04);const tm=$('#vtime');if(tm)tm.textContent=(vtrim.side==='l'?'Inicio ':'Final ')+fmtT(vtrim.side==='l'&&!img?c.in:c.out)+' · '+o.dur.toFixed(1)+' s'},
+   up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);removeEventListener('pointercancel',up);vtrim=null;vCommit();refresh()};
+  addEventListener('pointermove',mv);addEventListener('pointerup',up);addEventListener('pointercancel',up);return}
  const ti=e.target.closest('[data-ti]');if(ti){VD.tsel=+ti.dataset.ti;cur='vtext';vSeek(VD.texts[VD.tsel].start+.01);refresh();return}
  if(vplay)vPause();vSeek(vTrackT(e));const ci=e.target.closest('[data-ci]');if(ci){VD.sel=+ci.dataset.ci;if(!['vedit','vcolor','vfx'].includes(cur))cur='vedit'}refresh();
  const mv=ev=>{vSeek(vTrackT(ev))},up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up)};addEventListener('pointermove',mv);addEventListener('pointerup',up)});
